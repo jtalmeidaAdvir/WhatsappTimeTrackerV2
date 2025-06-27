@@ -1,8 +1,123 @@
 import { storage } from "../storage";
 import type { InsertAttendanceRecord } from "@shared/schema";
+import qrcode from 'qrcode-terminal';
 
 export class WhatsAppService {
   private readonly validCommands = ['entrada', 'saida', 'pausa', 'volta', 'horas'];
+  private client: any = null;
+  private isReady: boolean = false;
+  private Client: any = null;
+  private LocalAuth: any = null;
+
+  constructor() {
+    this.initializeClient();
+  }
+
+  private async initializeClient(): Promise<void> {
+    try {
+      // Dynamic import for whatsapp-web.js
+      const whatsappWebJs = await import('whatsapp-web.js');
+      this.Client = whatsappWebJs.default?.Client || whatsappWebJs.Client;
+      this.LocalAuth = whatsappWebJs.default?.LocalAuth || whatsappWebJs.LocalAuth;
+
+      this.client = new this.Client({
+        authStrategy: new this.LocalAuth(),
+        puppeteer: {
+          headless: true,
+          executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--disable-gpu',
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor'
+          ]
+        }
+      });
+
+      this.client.on('qr', (qr: string) => {
+        console.log('\n🔗 Para conectar o WhatsApp, escaneie o QR code abaixo:');
+        qrcode.generate(qr, { small: true });
+        console.log('\nAbra o WhatsApp no seu telemóvel > Menu > Dispositivos conectados > Conectar dispositivo');
+      });
+
+      this.client.on('ready', () => {
+        console.log('✅ WhatsApp Web.js client está pronto!');
+        this.isReady = true;
+      });
+
+      this.client.on('authenticated', () => {
+        console.log('✅ WhatsApp autenticado com sucesso!');
+      });
+
+      this.client.on('auth_failure', (msg: any) => {
+        console.error('❌ Falha na autenticação do WhatsApp:', msg);
+      });
+
+      this.client.on('disconnected', (reason: any) => {
+        console.log('❌ WhatsApp desconectado:', reason);
+        this.isReady = false;
+      });
+
+      this.client.on('message', async (message: any) => {
+        await this.handleIncomingMessage(message);
+      });
+
+      await this.client.initialize();
+    } catch (error) {
+      console.error('❌ Erro ao inicializar WhatsApp-Web.js:', error);
+    }
+  }
+
+  private async handleIncomingMessage(message: any): Promise<void> {
+    try {
+      // Ignore messages from groups and status updates
+      if (message.from.includes('@g.us') || message.from === 'status@broadcast') {
+        return;
+      }
+
+      // Ignore messages from the bot itself
+      if (message.fromMe) {
+        return;
+      }
+
+      const phone = `+${message.from.replace('@c.us', '')}`;
+      const messageBody = message.body.toLowerCase().trim();
+
+      console.log(`📱 Mensagem recebida de ${phone}: ${messageBody}`);
+
+      let location: { latitude?: string; longitude?: string; address?: string } | undefined;
+
+      // Check if message has location
+      if (message.location) {
+        location = {
+          latitude: message.location.latitude?.toString(),
+          longitude: message.location.longitude?.toString(),
+          address: message.location.description || ''
+        };
+        console.log(`📍 Localização recebida: lat=${location.latitude}, lng=${location.longitude}`);
+        
+        // Handle location-only message
+        if (!messageBody || messageBody === '') {
+          const response = await this.processMessage(phone, 'location_received', location);
+          await this.sendMessage(phone, response);
+          return;
+        }
+      }
+
+      // Process the message
+      const response = await this.processMessage(phone, messageBody, location);
+      
+      // Send response
+      await this.sendMessage(phone, response);
+    } catch (error) {
+      console.error('❌ Erro ao processar mensagem:', error);
+    }
+  }
 
   async processMessage(phone: string, message: string, location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
     // Handle location-only messages
@@ -363,43 +478,36 @@ export class WhatsAppService {
            `Envie apenas a palavra do comando.`;
   }
 
-    async sendMessage(phone: string, message: string): Promise<void> {
-        try {
-            const instanceId = "3E34A6DE70CA90866206EA0C62B464CE";
-            const token = "7E852B60B0AE2417339AA89A";
-            const clientToken = "F7f29442191384316b26f68bbdc6653a5S"; // Seu Client-Token
+  async sendMessage(phone: string, message: string): Promise<void> {
+    try {
+      if (!this.client || !this.isReady) {
+        console.error('❌ WhatsApp client não está pronto');
+        return;
+      }
 
-            const apiUrl = `https://api.z-api.io/instances/${instanceId}/token/${token}/send-text`;
+      // Convert phone number to WhatsApp format
+      const cleanPhone = phone.replace(/[+\s]/g, '');
+      const chatId = `${cleanPhone}@c.us`;
 
-            const cleanPhone = phone.replace(/[+\s]/g, '');
-
-            const payload = { phone: cleanPhone, message };
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Client-Token': clientToken,  // <-- Inclua aqui
-                },
-                body: JSON.stringify(payload),
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(`Z-API error: ${response.status} ${response.statusText} - ${JSON.stringify(result)}`);
-            }
-
-            // Z-API returns success with different formats, check for message ID as success indicator
-            if (result.zaapId || result.messageId || result.id) {
-                console.log(`Mensagem enviada com sucesso para ${phone}:`, result.messageId || result.id);
-            } else {
-                console.log(`Resposta Z-API para ${phone}:`, result);
-            }
-        } catch (error) {
-            console.error(`Falha ao enviar mensagem para ${phone}:`, error);
-        }
+      await this.client.sendMessage(chatId, message);
+      console.log(`✅ Mensagem enviada para ${phone}: ${message.substring(0, 50)}...`);
+    } catch (error) {
+      console.error(`❌ Erro ao enviar mensagem para ${phone}:`, error);
     }
+  }
+
+  // Method to check if WhatsApp is ready
+  public isWhatsAppReady(): boolean {
+    return this.isReady;
+  }
+
+  // Method to get QR code for authentication
+  public async getQRCode(): Promise<string | null> {
+    if (this.client && !this.isReady) {
+      return 'Aguarde o QR code aparecer no console...';
+    }
+    return null;
+  }
 
 }
 
