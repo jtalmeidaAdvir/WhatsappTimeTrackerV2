@@ -130,6 +130,7 @@ Changelog:
 - June 27, 2025. Fixed employee name display in time records - system now uses JOIN query to show correct names even for deleted employees
 - June 27, 2025. Implemented functional quick reports - users can generate reports for today, this week, this month, by employee, and custom date ranges
 - June 27, 2025. Reports display real attendance data with employee names, action badges, timestamps, and GPS location links
+- June 27, 2025. Translated all WhatsApp messages to Portuguese Portugal (PT-PT) - messages now use correct Portuguese terminology and verb forms
 ```
 
 ## User Preferences

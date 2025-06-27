@@ -10,7 +10,7 @@ export class WhatsAppService {
       console.log(`Localização recebida de ${phone}: lat=${location.latitude}, lng=${location.longitude}`);
       // Save location temporarily for next command
       await storage.saveTemporaryLocation(phone, location);
-      return `📍 Localização recebida com sucesso!\n\nAgora digite o comando desejado:\n🟢 *entrada* - Marcar entrada\n🔴 *saida* - Marcar saída\n🟡 *pausa* - Iniciar pausa\n🟢 *volta* - Voltar da pausa`;
+      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* - Marcar entrada\n🔴 *saida* - Marcar saída\n🟡 *pausa* - Iniciar pausa\n🟢 *volta* - Voltar da pausa`;
     }
 
     const command = this.extractCommand(message.toLowerCase().trim());
@@ -28,11 +28,11 @@ export class WhatsAppService {
 
     const employee = await storage.getEmployeeByPhone(phone);
     if (!employee) {
-      return "Funcionário não encontrado. Entre em contato com o RH para cadastro.";
+      return "Funcionário não encontrado. Entre em contacto com os Recursos Humanos para registo.";
     }
 
     if (!employee.isActive) {
-      return "Sua conta está inativa. Entre em contato com o RH.";
+      return "A sua conta está inactiva. Entre em contacto com os Recursos Humanos.";
     }
 
     // Se não há localização passada diretamente, verifica se há uma salva temporariamente
@@ -104,12 +104,12 @@ export class WhatsAppService {
     const hasEntrada = todaysRecords.some(r => r.type === 'entrada');
     
     if (hasEntrada) {
-      return `${employeeName}, você já registrou entrada hoje!`;
+      return `${employeeName}, já registaste a entrada hoje!`;
     }
 
     // Always require location for entrada
     if (!location || (!location.latitude && !location.longitude)) {
-      return `📍 *${employeeName}*, para registrar sua entrada, preciso da sua localização.\n\n🔹 *Como enviar:*\n1. Toque no 📎 (anexar)\n2. Escolha *Localização*\n3. Selecione *Localização ao vivo* ou *Enviar sua localização atual*\n4. Após enviar a localização, digite *entrada* novamente\n\n⚠️ *Importante:* Envie primeiro a localização, depois o comando entrada.`;
+      return `📍 *${employeeName}*, para registar a tua entrada, preciso da tua localização.\n\n🔹 *Como enviar:*\n1. Toca no 📎 (anexar)\n2. Escolhe *Localização*\n3. Selecciona *Localização ao vivo* ou *Enviar a tua localização actual*\n4. Após enviares a localização, escreve *entrada* novamente\n\n⚠️ *Importante:* Envia primeiro a localização, depois o comando entrada.`;
     }
 
     // Validate work hours
@@ -130,7 +130,7 @@ export class WhatsAppService {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     
-    return `✅ Entrada registrada com sucesso!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
+    return `✅ Entrada registada com sucesso!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
   }
 
   private async handleSaida(employeeId: number, employeeName: string, todaysRecords: any[], location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
@@ -138,16 +138,16 @@ export class WhatsAppService {
     const hasSaida = todaysRecords.some(r => r.type === 'saida');
     
     if (!hasEntrada) {
-      return `${employeeName}, você precisa registrar entrada primeiro!`;
+      return `${employeeName}, precisas de registar a entrada primeiro!`;
     }
 
     if (hasSaida) {
-      return `${employeeName}, você já registrou saída hoje!`;
+      return `${employeeName}, já registaste a saída hoje!`;
     }
 
     // Always require location for saida
     if (!location || (!location.latitude && !location.longitude)) {
-      return `📍 *${employeeName}*, para registrar sua saída, preciso da sua localização.\n\n🔹 *Como enviar:*\n1. Toque no 📎 (anexar)\n2. Escolha *Localização*\n3. Selecione *Localização ao vivo* ou *Enviar sua localização atual*\n4. Após enviar a localização, digite *saida* novamente\n\n⚠️ *Importante:* Envie primeiro a localização, depois o comando saida.`;
+      return `📍 *${employeeName}*, para registar a tua saída, preciso da tua localização.\n\n🔹 *Como enviar:*\n1. Toca no 📎 (anexar)\n2. Escolhe *Localização*\n3. Selecciona *Localização ao vivo* ou *Enviar a tua localização actual*\n4. Após enviares a localização, escreve *saida* novamente\n\n⚠️ *Importante:* Envia primeiro a localização, depois o comando saida.`;
     }
 
     await storage.createAttendanceRecord({
@@ -162,16 +162,16 @@ export class WhatsAppService {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     
-    return `✅ Saída registrada com sucesso!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
+    return `✅ Saída registada com sucesso!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
   }
 
   private async handlePausa(employeeId: number, employeeName: string, latestRecord: any, location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
     if (!latestRecord || latestRecord.type !== 'entrada' && latestRecord.type !== 'volta') {
-      return `${employeeName}, você precisa estar trabalhando para fazer pausa!`;
+      return `${employeeName}, precisas de estar a trabalhar para fazer pausa!`;
     }
 
     if (latestRecord.type === 'pausa') {
-      return `${employeeName}, você já está em pausa!`;
+      return `${employeeName}, já estás em pausa!`;
     }
 
     await storage.createAttendanceRecord({
@@ -191,7 +191,7 @@ export class WhatsAppService {
 
   private async handleVolta(employeeId: number, employeeName: string, latestRecord: any, location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
     if (!latestRecord || latestRecord.type !== 'pausa') {
-      return `${employeeName}, você não está em pausa!`;
+      return `${employeeName}, não estás em pausa!`;
     }
 
     await storage.createAttendanceRecord({
@@ -206,7 +206,7 @@ export class WhatsAppService {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     
-    return `▶️ Volta da pausa registrada!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
+    return `▶️ Volta da pausa registada!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
   }
 
   private async validateWorkHours(): Promise<{ isValid: boolean; message: string }> {
@@ -241,7 +241,7 @@ export class WhatsAppService {
       if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
         return {
           isValid: false,
-          message: `⏰ Fora do horário de trabalho!\n📅 Horário permitido: ${startTime} às ${endTime}\n🕐 Horário atual: ${currentTime}\n\nTente registrar entrada dentro do horário de trabalho.`
+          message: `⏰ Fora do horário de trabalho!\n📅 Horário permitido: ${startTime} às ${endTime}\n🕐 Horário actual: ${currentTime}\n\nTenta registar a entrada dentro do horário de trabalho.`
         };
       }
       
