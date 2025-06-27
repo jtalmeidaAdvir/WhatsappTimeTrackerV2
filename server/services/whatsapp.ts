@@ -4,6 +4,16 @@ import qrcode from 'qrcode-terminal';
 
 export class WhatsAppService {
   private readonly validCommands = ['entrada', 'saida', 'pausa', 'volta', 'horas'];
+  
+  // Mapeamento de variações de comandos para comandos principais
+  private readonly commandVariations = {
+    'entrada': ['entrada', 'entrar', 'chegar', 'chegada', 'inicio', 'iniciar', 'comecar', 'começar', 'bom dia', 'bomdia'],
+    'saida': ['saida', 'saída', 'sair', 'vou sair', 'quero sair', 'fim', 'terminar', 'acabar', 'tchau', 'adeus', 'boa tarde', 'boatarde', 'boa noite', 'boanoite'],
+    'pausa': ['pausa', 'pausar', 'almoco', 'almoço', 'lanche', 'cafe', 'café', 'descanso', 'break', 'intervalo'],
+    'volta': ['volta', 'voltar', 'retorno', 'regressar', 'continuar', 'voltei', 'regresso', 'ja voltei', 'já voltei'],
+    'horas': ['horas', 'tempo', 'quanto tempo', 'quantas horas', 'total', 'trabalhei', 'trabalhado', 'relatorio', 'relatório']
+  };
+  
   private client: any = null;
   private isReady: boolean = false;
   private Client: any = null;
@@ -129,7 +139,7 @@ export class WhatsAppService {
       console.log(`Localização recebida de ${phone}: lat=${location.latitude}, lng=${location.longitude}`);
       // Save location temporarily for next command
       await storage.saveTemporaryLocation(phone, location);
-      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* - Marcar entrada\n🔴 *saida* - Marcar saída\n🟡 *pausa* - Iniciar pausa\n🟢 *volta* - Voltar da pausa\n⏱️ *horas* - Ver horas trabalhadas`;
+      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* (ou "chegar", "bom dia")\n🔴 *saida* (ou "sair", "tchau")\n🟡 *pausa* (ou "almoço", "lanche")\n🟢 *volta* (ou "voltei", "regresso")\n⏱️ *horas* (ou "tempo", "quantas horas")`;
     }
 
     const command = this.extractCommand(message.toLowerCase().trim());
@@ -177,12 +187,34 @@ export class WhatsAppService {
   }
 
   private extractCommand(message: string): string | null {
-    const words = message.split(/\s+/);
-    for (const word of words) {
-      if (this.validCommands.includes(word)) {
-        return word;
+    const cleanMessage = message.toLowerCase().trim();
+    
+    // Primeiro verifica comandos exatos
+    for (const command of this.validCommands) {
+      if (cleanMessage === command) {
+        return command;
       }
     }
+    
+    // Depois verifica variações completas (frases)
+    for (const [mainCommand, variations] of Object.entries(this.commandVariations)) {
+      for (const variation of variations) {
+        if (cleanMessage === variation || cleanMessage.includes(variation)) {
+          return mainCommand;
+        }
+      }
+    }
+    
+    // Por último, verifica palavras individuais
+    const words = cleanMessage.split(/\s+/);
+    for (const [mainCommand, variations] of Object.entries(this.commandVariations)) {
+      for (const word of words) {
+        if (variations.includes(word)) {
+          return mainCommand;
+        }
+      }
+    }
+    
     return null;
   }
 
@@ -486,12 +518,17 @@ export class WhatsAppService {
 
   private getHelpMessage(): string {
     return `📋 *Comandos disponíveis:*\n\n` +
-           `🟢 *entrada* - Marcar entrada\n` +
-           `🔴 *saida* - Marcar saída\n` +
-           `🟡 *pausa* - Iniciar pausa\n` +
-           `🟢 *volta* - Voltar da pausa\n` +
-           `⏱️ *horas* - Ver horas trabalhadas hoje\n\n` +
-           `Envie apenas a palavra do comando.`;
+           `🟢 *ENTRADA* - Para marcar chegada\n` +
+           `   _Exemplos: entrada, entrar, chegar, bom dia_\n\n` +
+           `🔴 *SAÍDA* - Para marcar saída\n` +
+           `   _Exemplos: saida, sair, vou sair, tchau, boa tarde_\n\n` +
+           `🟡 *PAUSA* - Para iniciar pausa\n` +
+           `   _Exemplos: pausa, almoço, lanche, café_\n\n` +
+           `🟢 *VOLTA* - Para voltar da pausa\n` +
+           `   _Exemplos: volta, voltar, voltei, já voltei_\n\n` +
+           `⏱️ *HORAS* - Para ver tempo trabalhado\n` +
+           `   _Exemplos: horas, tempo, quantas horas_\n\n` +
+           `💡 *Pode escrever de forma natural!*`;
   }
 
   async sendMessage(phone: string, message: string): Promise<void> {

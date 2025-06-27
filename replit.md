@@ -157,6 +157,9 @@ Changelog:
 - June 27, 2025. Created automatic success detection - QR code closes and shows success message when connection completes
 - June 27, 2025. Enhanced user experience with visual loading states and clear connection instructions
 - June 27, 2025. Complete WhatsApp number switching now fully integrated in web interface
+- June 27, 2025. Enhanced WhatsApp command recognition - system now accepts natural variations like "sair", "vou sair", "tchau", "bom dia", "almoço", "voltei"
+- June 27, 2025. Added intelligent command mapping - employees can now use multiple ways to express the same action (entrada/entrar/chegar/bom dia)
+- June 27, 2025. Updated help messages to show command examples and encourage natural language usage
 ```
 
 ## User Preferences
