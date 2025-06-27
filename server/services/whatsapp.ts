@@ -211,12 +211,20 @@ export class WhatsAppService {
       }
     }
 
+    // Security validation: Check phone format
+    if (!phone || !phone.startsWith('+')) {
+      console.log(`🚫 Invalid phone format: ${phone}`);
+      return "Formato de número inválido.";
+    }
+
     const employee = await storage.getEmployeeByPhone(phone);
     if (!employee) {
+      console.log(`🚫 Unauthorized access attempt from: ${phone}`);
       return "Funcionário não encontrado. Entre em contacto com os Recursos Humanos para registo.";
     }
 
     if (!employee.isActive) {
+      console.log(`🚫 Inactive employee access attempt: ${employee.name} (${phone})`);
       return "A sua conta está inactiva. Entre em contacto com os Recursos Humanos.";
     }
 
