@@ -1,3 +1,2 @@
-2025/06/27-17:24:55.125 3a3 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/Session Storage/MANIFEST-000001
-2025/06/27-17:24:55.125 3a3 Recovering log #3
-2025/06/27-17:24:55.125 3a3 Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/Session Storage/000003.log 
+2025/06/27-17:27:17.827 57e Creating DB /home/runner/workspace/.wwebjs_auth/session/Default/Session Storage since it was missing.
+2025/06/27-17:27:17.837 57e Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/Session Storage/MANIFEST-000001
