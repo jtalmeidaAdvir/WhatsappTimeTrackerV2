@@ -364,7 +364,7 @@ export default function Settings() {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => window.open('/whatsapp-integration', '_blank')}
+                  onClick={() => window.location.href = '/whatsapp-integration'}
                 >
                   Configurar WhatsApp
                 </Button>
