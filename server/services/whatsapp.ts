@@ -7,8 +7,8 @@ export class WhatsAppService {
   
   // Mapeamento de variações de comandos para comandos principais
   private readonly commandVariations = {
-    'entrada': ['entrada', 'entrar', 'chegar', 'chegada', 'inicio', 'iniciar', 'comecar', 'começar', 'bom dia', 'bomdia'],
-    'saida': ['saida', 'saída', 'sair', 'vou sair', 'quero sair', 'fim', 'terminar', 'acabar', 'tchau', 'adeus', 'boa tarde', 'boatarde', 'boa noite', 'boanoite'],
+    'entrada': ['entrada', 'entrar', 'chegar', 'chegada', 'inicio', 'início', 'iniciar', 'comecar', 'começar', 'bom dia', 'bomdia', 'entrei'],
+    'saida': ['saida', 'saída', 'sair', 'vou sair', 'quero sair', 'fim', 'terminar', 'acabar', 'tchau', 'adeus', 'boa tarde', 'boatarde', 'boa noite', 'boanoite', 'saí', 'sai'],
     'pausa': ['pausa', 'pausar', 'almoco', 'almoço', 'lanche', 'cafe', 'café', 'descanso', 'break', 'intervalo'],
     'volta': ['volta', 'voltar', 'retorno', 'regressar', 'continuar', 'voltei', 'regresso', 'ja voltei', 'já voltei'],
     'horas': ['horas', 'tempo', 'quanto tempo', 'quantas horas', 'total', 'trabalhei', 'trabalhado', 'relatorio', 'relatório']
@@ -189,28 +189,54 @@ export class WhatsAppService {
   private extractCommand(message: string): string | null {
     const cleanMessage = message.toLowerCase().trim();
     
+    // Função para normalizar texto (remove acentos e caracteres especiais)
+    const normalize = (text: string) => {
+      return text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .toLowerCase()
+        .trim();
+    };
+    
+    const normalizedMessage = normalize(cleanMessage);
+    
     // Primeiro verifica comandos exatos
     for (const command of this.validCommands) {
-      if (cleanMessage === command) {
+      if (cleanMessage === command || normalizedMessage === normalize(command)) {
         return command;
       }
     }
     
-    // Depois verifica variações completas (frases)
+    // Depois verifica variações completas (frases) - com e sem normalização
     for (const [mainCommand, variations] of Object.entries(this.commandVariations)) {
       for (const variation of variations) {
-        if (cleanMessage === variation || cleanMessage.includes(variation)) {
+        if (cleanMessage === variation || 
+            cleanMessage.includes(variation) ||
+            normalizedMessage === normalize(variation) ||
+            normalizedMessage.includes(normalize(variation))) {
           return mainCommand;
         }
       }
     }
     
-    // Por último, verifica palavras individuais
+    // Por último, verifica palavras individuais - com e sem normalização
     const words = cleanMessage.split(/\s+/);
+    const normalizedWords = normalizedMessage.split(/\s+/);
+    
     for (const [mainCommand, variations] of Object.entries(this.commandVariations)) {
+      // Verifica palavras originais
       for (const word of words) {
         if (variations.includes(word)) {
           return mainCommand;
+        }
+      }
+      
+      // Verifica palavras normalizadas
+      for (const word of normalizedWords) {
+        for (const variation of variations) {
+          if (word === normalize(variation)) {
+            return mainCommand;
+          }
         }
       }
     }
