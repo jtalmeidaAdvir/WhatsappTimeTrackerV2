@@ -107,7 +107,7 @@ export class WhatsAppService {
       return `${employeeName}, você já registrou entrada hoje!`;
     }
 
-    // Check if location is required but not provided
+    // Always require location for entrada
     if (!location || (!location.latitude && !location.longitude)) {
       return `📍 *${employeeName}*, para registrar sua entrada, preciso da sua localização.\n\n🔹 *Como enviar:*\n1. Toque no 📎 (anexar)\n2. Escolha *Localização*\n3. Selecione *Localização ao vivo* ou *Enviar sua localização atual*\n4. Após enviar a localização, digite *entrada* novamente\n\n⚠️ *Importante:* Envie primeiro a localização, depois o comando entrada.`;
     }
@@ -143,6 +143,11 @@ export class WhatsAppService {
 
     if (hasSaida) {
       return `${employeeName}, você já registrou saída hoje!`;
+    }
+
+    // Always require location for saida
+    if (!location || (!location.latitude && !location.longitude)) {
+      return `📍 *${employeeName}*, para registrar sua saída, preciso da sua localização.\n\n🔹 *Como enviar:*\n1. Toque no 📎 (anexar)\n2. Escolha *Localização*\n3. Selecione *Localização ao vivo* ou *Enviar sua localização atual*\n4. Após enviar a localização, digite *saida* novamente\n\n⚠️ *Importante:* Envie primeiro a localização, depois o comando saida.`;
     }
 
     await storage.createAttendanceRecord({

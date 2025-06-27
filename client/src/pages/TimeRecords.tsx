@@ -144,8 +144,9 @@ export default function TimeRecords() {
                           <div className="text-sm text-gray-500 flex items-center">
                             {record.message}
                             {(record.latitude || record.longitude) && (
-                              <div className="ml-2 flex items-center text-blue-600" title={record.address || 'Localização capturada'}>
-                                <MapPin className="h-3 w-3" />
+                              <div className="ml-2 flex items-center text-blue-600" title={`Localização: ${record.latitude}, ${record.longitude}${record.address ? ` - ${record.address}` : ''}`}>
+                                <MapPin className="h-3 w-3 mr-1" />
+                                <span className="text-xs">GPS</span>
                               </div>
                             )}
                           </div>
