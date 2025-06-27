@@ -130,6 +130,115 @@ export default function Reports() {
     setSelectedEmployee(null);
   };
 
+  const calculateWorkHours = (records: AttendanceRecordWithDBFields[]) => {
+    const employeeStats: Record<string, {
+      name: string;
+      totalWorkedMinutes: number;
+      totalBreakMinutes: number;
+      entries: string[];
+      exits: string[];
+      workPeriods: Array<{start: Date, end?: Date}>;
+      breakPeriods: Array<{start: Date, end?: Date}>;
+    }> = {};
+
+    // Group records by employee and date
+    const groupedRecords = records.reduce((acc, record) => {
+      const employeeId = record.employee_id || record.employeeId;
+      const employeeName = getEmployeeName(record);
+      const date = new Date(record.timestamp).toDateString();
+      const key = `${employeeId}-${date}`;
+      
+      if (!acc[key]) {
+        acc[key] = {
+          employeeId,
+          employeeName,
+          date,
+          records: []
+        };
+      }
+      acc[key].records.push(record);
+      return acc;
+    }, {} as Record<string, {employeeId: number, employeeName: string, date: string, records: AttendanceRecordWithDBFields[]}>);
+
+    // Calculate hours for each employee-date combination
+    Object.values(groupedRecords).forEach(group => {
+      const employeeKey = `${group.employeeId}-${group.employeeName}`;
+      
+      if (!employeeStats[employeeKey]) {
+        employeeStats[employeeKey] = {
+          name: group.employeeName,
+          totalWorkedMinutes: 0,
+          totalBreakMinutes: 0,
+          entries: [],
+          exits: [],
+          workPeriods: [],
+          breakPeriods: []
+        };
+      }
+
+      const sortedRecords = group.records.sort((a, b) => 
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+
+      let currentWorkStart: Date | null = null;
+      let currentBreakStart: Date | null = null;
+
+      sortedRecords.forEach(record => {
+        const timestamp = new Date(record.timestamp);
+        
+        switch (record.type) {
+          case 'entrada':
+            if (currentWorkStart === null) {
+              currentWorkStart = timestamp;
+              employeeStats[employeeKey].workPeriods.push({start: timestamp});
+              employeeStats[employeeKey].entries.push(formatTime(timestamp));
+            }
+            break;
+            
+          case 'saida':
+            if (currentWorkStart !== null) {
+              const workPeriod = employeeStats[employeeKey].workPeriods.find(p => !p.end);
+              if (workPeriod) {
+                workPeriod.end = timestamp;
+                const minutes = (timestamp.getTime() - workPeriod.start.getTime()) / (1000 * 60);
+                employeeStats[employeeKey].totalWorkedMinutes += minutes;
+              }
+              currentWorkStart = null;
+              employeeStats[employeeKey].exits.push(formatTime(timestamp));
+            }
+            break;
+            
+          case 'pausa':
+            if (currentBreakStart === null) {
+              currentBreakStart = timestamp;
+              employeeStats[employeeKey].breakPeriods.push({start: timestamp});
+            }
+            break;
+            
+          case 'volta':
+            if (currentBreakStart !== null) {
+              const breakPeriod = employeeStats[employeeKey].breakPeriods.find(p => !p.end);
+              if (breakPeriod) {
+                breakPeriod.end = timestamp;
+                const minutes = (timestamp.getTime() - breakPeriod.start.getTime()) / (1000 * 60);
+                employeeStats[employeeKey].totalBreakMinutes += minutes;
+              }
+              currentBreakStart = null;
+            }
+            break;
+        }
+      });
+    });
+
+    return employeeStats;
+  };
+
+  const formatMinutesToHours = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = Math.round(minutes % 60);
+    return `${hours}h ${mins}m`;
+  };
+
   const exportToCSV = () => {
     const filteredRecords = getFilteredRecords();
     if (filteredRecords.length === 0) {
@@ -372,6 +481,63 @@ export default function Reports() {
                           </span>
                         )}
                       </div>
+
+                      {/* Work Hours Summary */}
+                      {(() => {
+                        const workStats = calculateWorkHours(getFilteredRecords());
+                        const hasStats = Object.keys(workStats).length > 0;
+                        
+                        return hasStats && (
+                          <div className="mb-6 space-y-4">
+                            <h4 className="text-lg font-semibold text-gray-900 mb-3">Resumo de Horas</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {Object.entries(workStats).map(([key, stats]) => (
+                                <Card key={key} className="border-l-4 border-l-blue-500">
+                                  <CardContent className="p-4">
+                                    <div className="space-y-3">
+                                      <h5 className="font-medium text-gray-900">{stats.name}</h5>
+                                      
+                                      <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                          <span className="text-gray-600">Horas Trabalhadas:</span>
+                                          <span className="font-medium text-green-700">
+                                            {formatMinutesToHours(stats.totalWorkedMinutes)}
+                                          </span>
+                                        </div>
+                                        
+                                        <div className="flex justify-between">
+                                          <span className="text-gray-600">Tempo em Pausa:</span>
+                                          <span className="font-medium text-orange-700">
+                                            {formatMinutesToHours(stats.totalBreakMinutes)}
+                                          </span>
+                                        </div>
+                                        
+                                        {stats.entries.length > 0 && (
+                                          <div className="flex justify-between">
+                                            <span className="text-gray-600">Primeira Entrada:</span>
+                                            <span className="font-medium text-blue-700">
+                                              {stats.entries[0]}
+                                            </span>
+                                          </div>
+                                        )}
+                                        
+                                        {stats.exits.length > 0 && (
+                                          <div className="flex justify-between">
+                                            <span className="text-gray-600">Última Saída:</span>
+                                            <span className="font-medium text-red-700">
+                                              {stats.exits[stats.exits.length - 1]}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
                       {getFilteredRecords().map((record) => {
                         const badge = getActionBadge(record.type);
                         return (

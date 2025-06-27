@@ -173,6 +173,11 @@ Changelog:
 - June 27, 2025. Added test interface for break reminders in WhatsApp Integration page
 - June 27, 2025. Fixed local development compatibility - system now detects Replit vs local environment automatically
 - June 27, 2025. WhatsApp-Web.js now works on Windows/Mac/Linux without hardcoded Chromium path
+- June 27, 2025. Enhanced reports system with comprehensive work hours calculation - now shows total worked hours, break time, entry/exit times
+- June 27, 2025. Added work hours summary cards in reports displaying first entry, last exit, total work time, and pause duration per employee
+- June 27, 2025. Fixed database field mapping issues in reports - resolved TypeScript inconsistencies between schema and API responses
+- June 27, 2025. Improved report filtering logic for date ranges (today, week, month) and employee-specific reports
+- June 27, 2025. Added CSV export functionality with complete attendance data including GPS coordinates
 ```
 
 ## User Preferences
