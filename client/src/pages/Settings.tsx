@@ -38,6 +38,8 @@ export default function Settings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isReconnecting, setIsReconnecting] = useState(false);
+  const [qrCode, setQrCode] = useState<string | null>(null);
+  const [showQrCode, setShowQrCode] = useState(false);
   
   const [formData, setFormData] = useState<SettingsForm>({
     companyName: "",
@@ -65,6 +67,40 @@ export default function Settings() {
   const { data: settings = [], isLoading } = useQuery<Setting[]>({
     queryKey: ["/api/settings"],
   });
+
+  // Function to check for QR code
+  const checkForQRCode = async () => {
+    try {
+      const response = await fetch("/api/whatsapp/qr");
+      const data = await response.json();
+      if (data.qrCode) {
+        setQrCode(data.qrCode);
+        setShowQrCode(true);
+      } else {
+        setQrCode(null);
+        setShowQrCode(false);
+      }
+    } catch (error) {
+      console.error("Error checking QR code:", error);
+    }
+  };
+
+  // Check for QR code when reconnecting
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isReconnecting) {
+      // Check immediately and then every 2 seconds
+      checkForQRCode();
+      interval = setInterval(checkForQRCode, 2000);
+    } else {
+      setShowQrCode(false);
+      setQrCode(null);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isReconnecting]);
 
   // Load settings into form when data is available
   useEffect(() => {
@@ -372,7 +408,7 @@ export default function Settings() {
                     if (response.ok) {
                       toast({
                         title: "WhatsApp",
-                        description: "Dados de autenticação removidos. Aguarde alguns segundos e verifique o console para o novo QR code.",
+                        description: "Dados de autenticação removidos. O QR code aparecerá abaixo em alguns segundos.",
                       });
                     } else {
                       throw new Error("Falha na reconexão");
@@ -384,13 +420,43 @@ export default function Settings() {
                       variant: "destructive",
                     });
                   } finally {
-                    // Reset loading state after 10 seconds
-                    setTimeout(() => setIsReconnecting(false), 10000);
+                    // Reset loading state after 15 seconds
+                    setTimeout(() => setIsReconnecting(false), 15000);
                   }
                 }}
               >
                 {isReconnecting ? "Reconectando..." : "Trocar Número"}
               </Button>
+              
+              {/* QR Code Display */}
+              {showQrCode && qrCode && (
+                <div className="mt-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 text-center">
+                  <h3 className="text-lg font-medium mb-3">Escaneie o QR Code</h3>
+                  <div className="flex justify-center mb-3">
+                    <img 
+                      src={qrCode} 
+                      alt="QR Code do WhatsApp" 
+                      className="border rounded"
+                      style={{ maxWidth: "256px", width: "100%" }}
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    1. Abra o WhatsApp no seu telemóvel<br/>
+                    2. Vá para Menu → Dispositivos conectados<br/>
+                    3. Toque em "Conectar dispositivo"<br/>
+                    4. Escaneie este código
+                  </p>
+                </div>
+              )}
+              
+              {isReconnecting && !showQrCode && (
+                <div className="mt-4 p-4 border rounded-lg bg-blue-50 dark:bg-blue-900/20 text-center">
+                  <div className="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent rounded-full mb-2"></div>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">
+                    Aguarde... O QR code aparecerá em alguns segundos
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

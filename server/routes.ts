@@ -265,6 +265,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get QR code as image
+  app.get("/api/whatsapp/qr", async (req, res) => {
+    try {
+      const qrImage = await whatsappService.getQRCodeImage();
+      if (qrImage) {
+        res.json({ qrCode: qrImage, message: "QR code available" });
+      } else {
+        res.json({ qrCode: null, message: "No QR code available" });
+      }
+    } catch (error) {
+      console.error("QR code error:", error);
+      res.status(500).json({ message: "Failed to get QR code" });
+    }
+  });
+
   // Reminder testing endpoints
   app.post("/api/reminders/test-clock-in", async (req, res) => {
     try {

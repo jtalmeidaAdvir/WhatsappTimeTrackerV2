@@ -8,6 +8,7 @@ export class WhatsAppService {
   private isReady: boolean = false;
   private Client: any = null;
   private LocalAuth: any = null;
+  private currentQRCode: string | null = null;
 
   constructor() {
     this.initializeClient();
@@ -43,11 +44,14 @@ export class WhatsAppService {
         console.log('\n🔗 Para conectar o WhatsApp, escaneie o QR code abaixo:');
         qrcode.generate(qr, { small: true });
         console.log('\nAbra o WhatsApp no seu telemóvel > Menu > Dispositivos conectados > Conectar dispositivo');
+        // Store QR code for web display
+        this.currentQRCode = qr;
       });
 
       this.client.on('ready', () => {
         console.log('✅ WhatsApp Web.js client está pronto!');
         this.isReady = true;
+        this.currentQRCode = null; // Clear QR code when connected
       });
 
       this.client.on('authenticated', () => {
@@ -515,10 +519,30 @@ export class WhatsAppService {
 
   // Method to get QR code for authentication
   public async getQRCode(): Promise<string | null> {
-    if (this.client && !this.isReady) {
-      return 'Aguarde o QR code aparecer no console...';
+    return this.currentQRCode;
+  }
+
+  // Method to get QR code as base64 image
+  public async getQRCodeImage(): Promise<string | null> {
+    if (!this.currentQRCode) {
+      return null;
     }
-    return null;
+    
+    try {
+      const QRCode = await import('qrcode');
+      const qrImage = await QRCode.toDataURL(this.currentQRCode, {
+        width: 256,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      return qrImage;
+    } catch (error) {
+      console.error('Erro ao gerar QR code:', error);
+      return null;
+    }
   }
 
   // Method to reconnect WhatsApp
