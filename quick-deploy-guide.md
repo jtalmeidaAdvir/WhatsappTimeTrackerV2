@@ -53,6 +53,12 @@ PORT=3000
 DATABASE_URL=file:./database.sqlite
 ```
 
+## Sobre a Base de Dados
+- **SQLite**: Base de dados em ficheiro (database.sqlite)
+- **Independente**: Não interfere com SQL Server existente
+- **Automática**: Cria-se automaticamente na primeira execução
+- **Portável**: Todos os dados ficam num só ficheiro
+
 ## Comandos PM2 Úteis
 ```bash
 # Reiniciar
