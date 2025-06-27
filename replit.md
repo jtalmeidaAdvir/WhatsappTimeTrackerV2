@@ -171,6 +171,8 @@ Changelog:
 - June 27, 2025. Added pause control verification every 5 minutes to prevent excessive break times
 - June 27, 2025. Created smart reminder logic that avoids spam by tracking recent notifications
 - June 27, 2025. Added test interface for break reminders in WhatsApp Integration page
+- June 27, 2025. Fixed local development compatibility - system now detects Replit vs local environment automatically
+- June 27, 2025. WhatsApp-Web.js now works on Windows/Mac/Linux without hardcoded Chromium path
 ```
 
 ## User Preferences

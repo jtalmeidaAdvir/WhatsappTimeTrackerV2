@@ -31,23 +31,34 @@ export class WhatsAppService {
       this.Client = whatsappWebJs.default?.Client || whatsappWebJs.Client;
       this.LocalAuth = whatsappWebJs.default?.LocalAuth || whatsappWebJs.LocalAuth;
 
+      // Detectar se está no Replit ou ambiente local
+      const isReplit = process.env.REPLIT_DEPLOYMENT || process.env.REPL_ID;
+      console.log(`🔧 Configurando WhatsApp para ambiente: ${isReplit ? 'Replit' : 'Local'}`);
+      
+      let puppeteerConfig: any = {
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--disable-gpu',
+          '--disable-web-security',
+          '--disable-features=VizDisplayCompositor'
+        ]
+      };
+
+      // Configuração específica para Replit
+      if (isReplit) {
+        puppeteerConfig.executablePath = '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium';
+      }
+      // Para ambiente local (Windows/Mac/Linux), o Puppeteer vai usar o Chrome instalado
+
       this.client = new this.Client({
         authStrategy: new this.LocalAuth(),
-        puppeteer: {
-          headless: true,
-          executablePath: '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu',
-            '--disable-web-security',
-            '--disable-features=VizDisplayCompositor'
-          ]
-        }
+        puppeteer: puppeteerConfig
       });
 
       this.client.on('qr', (qr: string) => {
