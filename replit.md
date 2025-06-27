@@ -114,7 +114,8 @@ Changelog:
 - June 27, 2025. Fixed employee creation issue - new employees now default to active status
 - June 27, 2025. Fixed employee reactivation functionality - deactivated employees can now be properly reactivated
 - June 27, 2025. Corrected database mapping and API endpoints for proper data handling
-- June 27, 2025. Current webhook URL: https://a9dc3cad-2d11-468d-a973-c276d8244805-00-2ip43l2d5emdo.janeway.replit.dev/api/whatsapp/webhook
+- June 27, 2025. Successfully migrated to new Replit environment with dynamic webhook URL
+- June 27, 2025. Webhook URL now automatically adapts to current domain: {origin}/api/whatsapp/webhook
 - June 27, 2025. Added permanent employee deletion feature - allows complete removal of inactive employees and all related data
 - June 27, 2025. Implemented automatic location capture for WhatsApp entries - system now automatically captures GPS coordinates when employees send location before time tracking commands
 - June 27, 2025. Added location fields (latitude, longitude, address) to attendance records database

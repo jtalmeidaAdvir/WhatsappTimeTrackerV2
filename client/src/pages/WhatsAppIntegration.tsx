@@ -94,7 +94,7 @@ export default function WhatsAppIntegration() {
                                     Webhook URL (Z-API)
                                 </label>
                                 <Input
-                                    value="https://108b-89-153-139-43.ngrok-free.app/api/whatsapp/webhook"
+                                    value={`${window.location.origin}/api/whatsapp/webhook`}
                                     readOnly
                                     className="bg-gray-50"
                                 />
