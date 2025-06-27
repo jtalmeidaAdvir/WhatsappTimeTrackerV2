@@ -87,6 +87,26 @@ export default function WhatsAppIntegration() {
         },
     });
 
+    const testButtonsMutation = useMutation({
+        mutationFn: async (data: { phone: string; message: string }) => {
+            const response = await apiRequest("POST", "/api/whatsapp/send-test-buttons", data);
+            return response.json();
+        },
+        onSuccess: (data) => {
+            toast({
+                title: "Botões enviados com sucesso",
+                description: data.message,
+            });
+        },
+        onError: () => {
+            toast({
+                title: "Erro no teste de botões",
+                description: "Não foi possível enviar mensagem com botões.",
+                variant: "destructive",
+            });
+        },
+    });
+
     const handleTestMessage = () => {
         if (!testPhone || !testMessage) {
             toast({
@@ -104,6 +124,22 @@ export default function WhatsAppIntegration() {
         } : undefined;
         
         testMessageMutation.mutate({ phone: testPhone, message: testMessage, location });
+    };
+
+    const handleTestButtons = () => {
+        if (!testPhone) {
+            toast({
+                title: "Campo obrigatório",
+                description: "Preencha o número de telefone para testar os botões.",
+                variant: "destructive",
+            });
+            return;
+        }
+        
+        testButtonsMutation.mutate({ 
+            phone: testPhone, 
+            message: "🎯 Teste de Botões de Resposta Rápida\n\nEscolha uma das opções abaixo ou digite o número correspondente:" 
+        });
     };
 
     const copyToClipboard = () => {
@@ -254,14 +290,25 @@ export default function WhatsAppIntegration() {
                                 </div>
                             </div>
                             
-                            <Button
-                                onClick={handleTestMessage}
-                                disabled={testMessageMutation.isPending}
-                                className="w-full"
-                            >
-                                <Send className="mr-2 h-4 w-4" />
-                                {testMessageMutation.isPending ? "Enviando..." : "Enviar Teste"}
-                            </Button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <Button
+                                    onClick={handleTestMessage}
+                                    disabled={testMessageMutation.isPending}
+                                    className="w-full"
+                                >
+                                    <Send className="mr-2 h-4 w-4" />
+                                    {testMessageMutation.isPending ? "Enviando..." : "Enviar Teste"}
+                                </Button>
+                                <Button
+                                    onClick={handleTestButtons}
+                                    disabled={testButtonsMutation.isPending}
+                                    variant="outline"
+                                    className="w-full"
+                                >
+                                    <MessageSquare className="mr-2 h-4 w-4" />
+                                    {testButtonsMutation.isPending ? "Enviando..." : "Testar Botões"}
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>

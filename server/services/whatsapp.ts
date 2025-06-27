@@ -139,10 +139,36 @@ export class WhatsAppService {
       console.log(`Localização recebida de ${phone}: lat=${location.latitude}, lng=${location.longitude}`);
       // Save location temporarily for next command
       await storage.saveTemporaryLocation(phone, location);
-      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* (ou "chegar", "bom dia")\n🔴 *saida* (ou "sair", "tchau")\n🟡 *pausa* (ou "vou à pausa", "break")\n🟢 *volta* (ou "voltei", "voltei da pausa")\n⏱️ *horas* (ou "tempo", "quantas horas")`;
+      // Send location confirmation with buttons
+      const locationButtons = [
+        { id: 'entrada', title: '🟢 Entrada' },
+        { id: 'saida', title: '🔴 Saída' },
+        { id: 'pausa', title: '🟡 Pausa' },
+        { id: 'volta', title: '🟢 Volta' },
+        { id: 'horas', title: '⏱️ Horas' }
+      ];
+      
+      const locationMessage = `📍 Localização recebida com sucesso!\n\nAgora escolha o comando:`;
+      
+      try {
+        await this.sendMessageWithButtons(phone, locationMessage, locationButtons);
+        return ""; // Empty return since message was already sent
+      } catch (error) {
+        return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* (ou "chegar", "bom dia")\n🔴 *saida* (ou "sair", "tchau")\n🟡 *pausa* (ou "vou à pausa", "break")\n🟢 *volta* (ou "voltei", "voltei da pausa")\n⏱️ *horas* (ou "tempo", "quantas horas")`;
+      }
     }
 
-    const command = this.extractCommand(message.toLowerCase().trim());
+    let command = this.extractCommand(message.toLowerCase().trim());
+    
+    // Check if it's a numbered response (1-5 for menu options)
+    if (!command && /^[1-5]$/.test(message.trim())) {
+      const numberCommands = ['entrada', 'saida', 'pausa', 'volta', 'horas'];
+      const index = parseInt(message.trim()) - 1;
+      if (index >= 0 && index < numberCommands.length) {
+        command = numberCommands[index];
+        console.log(`Comando numérico reconhecido: ${message} -> ${command}`);
+      }
+    }
     
     // Save the incoming message
     await storage.createWhatsappMessage({
@@ -152,7 +178,25 @@ export class WhatsAppService {
     });
 
     if (!command) {
-      return this.getHelpMessage();
+      // Send help message with quick reply buttons
+      const helpButtons = [
+        { id: 'entrada', title: '🟢 Entrada' },
+        { id: 'saida', title: '🔴 Saída' },
+        { id: 'pausa', title: '🟡 Pausa' },
+        { id: 'volta', title: '🟢 Volta' },
+        { id: 'horas', title: '⏱️ Horas' }
+      ];
+      
+      const helpMessage = this.getHelpMessage();
+      
+      // Try to send with buttons, fallback to regular message
+      try {
+        await this.sendMessageWithButtons(phone, helpMessage, helpButtons);
+        return ""; // Empty return since message was already sent
+      } catch (error) {
+        console.log('Botões não suportados, enviando mensagem normal');
+        return helpMessage;
+      }
     }
 
     const employee = await storage.getEmployeeByPhone(phone);
@@ -572,6 +616,51 @@ export class WhatsAppService {
       console.log(`✅ Mensagem enviada para ${phone}: ${message.substring(0, 50)}...`);
     } catch (error) {
       console.error(`❌ Erro ao enviar mensagem para ${phone}:`, error);
+    }
+  }
+
+  async sendMessageWithButtons(phone: string, message: string, buttons: Array<{id: string, title: string}>): Promise<void> {
+    try {
+      if (!this.client || !this.isReady) {
+        console.error('❌ WhatsApp client não está pronto');
+        return;
+      }
+
+      // Convert phone number to WhatsApp format
+      const cleanPhone = phone.replace(/[+\s]/g, '');
+      const chatId = `${cleanPhone}@c.us`;
+
+      // Try to create buttons using whatsapp-web.js format
+      try {
+        const whatsappWebJs = await import('whatsapp-web.js');
+        const { Buttons } = whatsappWebJs;
+        
+        if (Buttons) {
+          // Create buttons array in the correct format
+          const buttonArray = buttons.map(btn => ({id: btn.id, body: btn.title}));
+          
+          // Create buttons message
+          const buttonMessage = new Buttons(message, buttonArray, 'Escolha uma opção:', 'Comandos');
+
+          await this.client.sendMessage(chatId, buttonMessage);
+          console.log(`✅ Mensagem com botões enviada para ${phone}: ${message.substring(0, 50)}...`);
+          return;
+        }
+      } catch (buttonError) {
+        console.log('Botões não disponíveis, enviando lista de opções');
+      }
+
+      // Fallback: Send message with numbered options
+      const numberedMessage = message + '\n\n*Responda com o número:*\n' + 
+        buttons.map((btn, index) => `${index + 1}. ${btn.title}`).join('\n');
+      
+      await this.client.sendMessage(chatId, numberedMessage);
+      console.log(`✅ Mensagem com opções numeradas enviada para ${phone}`);
+      
+    } catch (error) {
+      console.error(`❌ Erro ao enviar mensagem com botões para ${phone}:`, error);
+      // Final fallback to regular message
+      await this.sendMessage(phone, message);
     }
   }
 

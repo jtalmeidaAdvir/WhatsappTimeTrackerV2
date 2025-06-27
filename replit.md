@@ -163,6 +163,10 @@ Changelog:
 - June 27, 2025. Enhanced "pausa" command - now accepts "vou à pausa", "break", "vou fazer pausa", "vou pausar"
 - June 27, 2025. Enhanced "volta" command - now accepts "voltei", "voltei da pausa", "já voltei da pausa", "voltei do almoço"
 - June 27, 2025. Successfully tested "saída" with accent - normalization system working correctly
+- June 27, 2025. Implemented WhatsApp quick reply buttons - users can now click buttons instead of typing commands
+- June 27, 2025. Added fallback to numbered options when buttons not supported - ensures compatibility across all devices
+- June 27, 2025. Created test interface for quick reply buttons in WhatsApp Integration page
+- June 27, 2025. Enhanced user experience with clickable command options and automatic number recognition (1-5)
 ```
 
 ## User Preferences

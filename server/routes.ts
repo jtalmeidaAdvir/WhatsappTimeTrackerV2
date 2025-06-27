@@ -301,6 +301,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // WhatsApp test send message with buttons
+  app.post("/api/whatsapp/send-test-buttons", async (req, res) => {
+    try {
+      const { phone, message } = req.body;
+      
+      const buttons = [
+        { id: 'entrada', title: '🟢 Entrada' },
+        { id: 'saida', title: '🔴 Saída' },
+        { id: 'pausa', title: '🟡 Pausa' },
+        { id: 'volta', title: '🟢 Volta' },
+        { id: 'horas', title: '⏱️ Horas' }
+      ];
+      
+      await whatsappService.sendMessageWithButtons(phone, message || "Escolha uma opção:", buttons);
+      res.json({ success: true, message: "Test message with buttons sent successfully" });
+    } catch (error) {
+      console.error("Test buttons send error:", error);
+      res.status(500).json({ message: "Failed to send test message with buttons" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
