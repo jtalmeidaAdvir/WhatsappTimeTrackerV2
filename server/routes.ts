@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { whatsappService } from "./services/whatsapp";
+import { schedulerService } from "./services/scheduler";
 import { z } from "zod";
 import { insertEmployeeSchema, insertWhatsappMessageSchema } from "@shared/schema";
 
@@ -248,6 +249,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Test send error:", error);
       res.status(500).json({ message: "Failed to send test message" });
+    }
+  });
+
+  // Reminder testing endpoints
+  app.post("/api/reminders/test-clock-in", async (req, res) => {
+    try {
+      await schedulerService.testClockInReminder();
+      res.json({ success: true, message: "Clock-in reminders sent to employees without entry today" });
+    } catch (error) {
+      console.error("Test clock-in reminder error:", error);
+      res.status(500).json({ message: "Failed to send clock-in reminders" });
+    }
+  });
+
+  app.post("/api/reminders/test-clock-out", async (req, res) => {
+    try {
+      await schedulerService.testClockOutReminder();
+      res.json({ success: true, message: "Clock-out reminders sent to employees without exit today" });
+    } catch (error) {
+      console.error("Test clock-out reminder error:", error);
+      res.status(500).json({ message: "Failed to send clock-out reminders" });
     }
   });
 

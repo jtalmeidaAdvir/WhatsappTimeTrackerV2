@@ -1,39 +1,19 @@
-2025/06/27-15:30:53.537 ba6 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2025/06/27-15:30:53.537 ba6 Recovering log #177
-2025/06/27-15:30:53.622 ba6 Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000177.log 
-2025/06/27-15:30:53.622 ba6 Delete type=2 #173
-2025/06/27-15:30:53.622 ba6 Delete type=2 #174
-2025/06/27-15:30:53.622 ba6 Delete type=2 #175
-2025/06/27-15:30:53.622 ba6 Delete type=2 #176
-2025/06/27-15:30:53.622 ba6 Delete type=2 #178
-2025/06/27-15:30:55.359 bab Level-0 table #185: started
-2025/06/27-15:30:55.464 bab Level-0 table #185: 1113979 bytes OK
-2025/06/27-15:30:55.474 bab Delete type=0 #177
-2025/06/27-15:30:55.475 bab Manual compaction at level-0 from '\x00\x1b\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x1c\x00\x00\x00' @ 0 : 0; will stop at (end)
-2025/06/27-15:30:57.471 bab Compacting 1@1 + 4@2 files
-2025/06/27-15:30:57.702 bab Generated table #186@1: 74525 keys, 2396073 bytes
-2025/06/27-15:30:57.825 bab Generated table #187@1: 26653 keys, 2194389 bytes
-2025/06/27-15:30:57.949 bab Generated table #188@1: 23781 keys, 2212898 bytes
-2025/06/27-15:30:58.104 bab Generated table #189@1: 56339 keys, 1358034 bytes
-2025/06/27-15:30:58.105 bab Compacted 1@1 + 4@2 files => 8161394 bytes
-2025/06/27-15:30:58.111 bab compacted to: files[ 0 0 4 0 0 0 0 ]
-2025/06/27-15:32:57.625 ba6 Level-0 table #191: started
-2025/06/27-15:32:57.700 ba6 Level-0 table #191: 1052613 bytes OK
-2025/06/27-15:32:57.715 ba6 Delete type=2 #179
-2025/06/27-15:32:57.715 ba6 Delete type=2 #180
-2025/06/27-15:32:57.715 ba6 Delete type=2 #181
-2025/06/27-15:32:57.715 ba6 Delete type=2 #182
-2025/06/27-15:32:57.715 ba6 Delete type=0 #184
-2025/06/27-15:32:57.716 ba6 Delete type=2 #185
-2025/06/27-15:33:31.118 ba6 Compacting 1@1 + 4@2 files
-2025/06/27-15:33:31.306 ba6 Generated table #192@1: 76089 keys, 2399102 bytes
-2025/06/27-15:33:31.366 ba6 Generated table #193@1: 27962 keys, 2178021 bytes
-2025/06/27-15:33:31.471 ba6 Generated table #194@1: 22651 keys, 2212426 bytes
-2025/06/27-15:33:31.526 ba6 Generated table #195@1: 55098 keys, 1292056 bytes
-2025/06/27-15:33:31.527 ba6 Compacted 1@1 + 4@2 files => 8081605 bytes
-2025/06/27-15:33:31.534 ba6 compacted to: files[ 0 0 4 0 0 0 0 ]
-2025/06/27-15:33:31.534 ba6 Delete type=2 #186
-2025/06/27-15:33:31.534 ba6 Delete type=2 #187
-2025/06/27-15:33:31.534 ba6 Delete type=2 #188
-2025/06/27-15:33:31.534 ba6 Delete type=2 #189
-2025/06/27-15:33:31.534 ba6 Delete type=2 #191
+2025/06/27-15:42:18.047 11b0 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/06/27-15:42:18.047 11b0 Recovering log #190
+2025/06/27-15:42:18.132 11b0 Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000190.log 
+2025/06/27-15:42:19.786 11b8 Level-0 table #198: started
+2025/06/27-15:42:19.908 11b8 Level-0 table #198: 1177817 bytes OK
+2025/06/27-15:42:19.914 11b8 Delete type=0 #190
+2025/06/27-15:42:19.916 11b0 Manual compaction at level-0 from '\x00\x1d\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x1e\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/06/27-15:42:22.046 11b6 Compacting 1@1 + 4@2 files
+2025/06/27-15:42:22.226 11b6 Generated table #199@1: 79268 keys, 2370708 bytes
+2025/06/27-15:42:22.340 11b6 Generated table #200@1: 27979 keys, 2219031 bytes
+2025/06/27-15:42:22.423 11b6 Generated table #201@1: 22433 keys, 2211046 bytes
+2025/06/27-15:42:22.500 11b6 Generated table #202@1: 56331 keys, 1397294 bytes
+2025/06/27-15:42:22.500 11b6 Compacted 1@1 + 4@2 files => 8198079 bytes
+2025/06/27-15:42:22.507 11b6 compacted to: files[ 0 0 4 0 0 0 0 ]
+2025/06/27-15:42:22.509 11b6 Delete type=2 #192
+2025/06/27-15:42:22.510 11b6 Delete type=2 #193
+2025/06/27-15:42:22.510 11b6 Delete type=2 #194
+2025/06/27-15:42:22.510 11b6 Delete type=2 #195
+2025/06/27-15:42:22.510 11b6 Delete type=2 #198

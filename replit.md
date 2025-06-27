@@ -136,6 +136,12 @@ Changelog:
 - June 27, 2025. Successfully migrated from Z-API to WhatsApp-Web.js (completely free alternative)
 - June 27, 2025. WhatsApp-Web.js fully integrated - QR code authentication working properly
 - June 27, 2025. System no longer depends on external paid services for WhatsApp functionality
+- June 27, 2025. Implemented automatic reminder system - sends clock-in reminders at 09:00 and clock-out reminders at 18:00
+- June 27, 2025. Added scheduler service with minute-by-minute verification of reminder times
+- June 27, 2025. Clock-in reminders sent only to employees without entry registered for the day
+- June 27, 2025. Clock-out reminders sent only to employees with entry but no exit registered
+- June 27, 2025. Created test interface for manual reminder testing with dedicated endpoints
+- June 27, 2025. All reminder messages personalized with employee names and proper Portuguese formatting
 ```
 
 ## User Preferences

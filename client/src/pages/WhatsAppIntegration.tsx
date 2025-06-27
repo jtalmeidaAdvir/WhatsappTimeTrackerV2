@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { MessageSquare, Send, TestTube, Settings, CheckCircle, Copy } from "lucide-react";
+import { MessageSquare, Send, TestTube, Settings, CheckCircle, Copy, Clock, Bell } from "lucide-react";
 
 export default function WhatsAppIntegration() {
     const [testPhone, setTestPhone] = useState("");
@@ -42,6 +42,46 @@ export default function WhatsAppIntegration() {
             toast({
                 title: "Erro no teste",
                 description: "Não foi possível processar a mensagem de teste.",
+                variant: "destructive",
+            });
+        },
+    });
+
+    const testClockInReminderMutation = useMutation({
+        mutationFn: async () => {
+            const response = await apiRequest("POST", "/api/reminders/test-clock-in", {});
+            return response.json();
+        },
+        onSuccess: (data) => {
+            toast({
+                title: "Lembretes de entrada enviados",
+                description: data.message,
+            });
+        },
+        onError: () => {
+            toast({
+                title: "Erro nos lembretes",
+                description: "Não foi possível enviar lembretes de entrada.",
+                variant: "destructive",
+            });
+        },
+    });
+
+    const testClockOutReminderMutation = useMutation({
+        mutationFn: async () => {
+            const response = await apiRequest("POST", "/api/reminders/test-clock-out", {});
+            return response.json();
+        },
+        onSuccess: (data) => {
+            toast({
+                title: "Lembretes de saída enviados",
+                description: data.message,
+            });
+        },
+        onError: () => {
+            toast({
+                title: "Erro nos lembretes",
+                description: "Não foi possível enviar lembretes de saída.",
                 variant: "destructive",
             });
         },
@@ -294,6 +334,67 @@ export default function WhatsAppIntegration() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Automatic Reminders */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center">
+                            <Bell className="mr-2 h-5 w-5" />
+                            Lembretes Automáticos
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-4 border rounded-lg">
+                                <div className="flex items-center space-x-2 mb-3">
+                                    <Clock className="h-5 w-5 text-blue-500" />
+                                    <h4 className="font-semibold text-gray-900">Lembrete de Entrada</h4>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-3">
+                                    Todos os dias às <strong>09:00</strong>, funcionários que ainda não registaram entrada recebem um lembrete automático.
+                                </p>
+                                <Button
+                                    onClick={() => testClockInReminderMutation.mutate()}
+                                    disabled={testClockInReminderMutation.isPending}
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full"
+                                >
+                                    {testClockInReminderMutation.isPending ? "Enviando..." : "Testar Agora"}
+                                </Button>
+                            </div>
+                            
+                            <div className="p-4 border rounded-lg">
+                                <div className="flex items-center space-x-2 mb-3">
+                                    <Clock className="h-5 w-5 text-orange-500" />
+                                    <h4 className="font-semibold text-gray-900">Lembrete de Saída</h4>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-3">
+                                    Todos os dias às <strong>18:00</strong>, funcionários que registaram entrada mas não saída recebem um lembrete.
+                                </p>
+                                <Button
+                                    onClick={() => testClockOutReminderMutation.mutate()}
+                                    disabled={testClockOutReminderMutation.isPending}
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full"
+                                >
+                                    {testClockOutReminderMutation.isPending ? "Enviando..." : "Testar Agora"}
+                                </Button>
+                            </div>
+                        </div>
+                        
+                        <div className="p-4 bg-green-50 rounded-lg">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <CheckCircle className="h-5 w-5 text-green-600" />
+                                <h4 className="font-semibold text-green-800">Sistema Ativo</h4>
+                            </div>
+                            <p className="text-sm text-green-700">
+                                O sistema de lembretes automáticos está ativo e funcionando. Os lembretes são enviados automaticamente nos horários configurados.
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
