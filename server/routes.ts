@@ -255,12 +255,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // WhatsApp reconnection endpoint
   app.post("/api/whatsapp/reconnect", async (req, res) => {
     try {
-      console.log("Attempting to reconnect WhatsApp...");
-      await whatsappService.reconnect();
-      res.json({ success: true, message: "WhatsApp reconnection initiated. Please scan the QR code again." });
+      console.log("Attempting to force new WhatsApp authentication...");
+      // Use forceNewAuth to clear saved credentials and show QR code
+      await whatsappService.forceNewAuth();
+      res.json({ success: true, message: "WhatsApp new authentication initiated. Please scan the QR code to connect a new number." });
     } catch (error) {
-      console.error("WhatsApp reconnection error:", error);
-      res.status(500).json({ message: "Failed to reconnect WhatsApp" });
+      console.error("WhatsApp new auth error:", error);
+      res.status(500).json({ message: "Failed to initiate new WhatsApp authentication" });
     }
   });
 

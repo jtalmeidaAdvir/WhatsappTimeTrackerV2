@@ -531,13 +531,18 @@ export class WhatsAppService {
       
       // Destroy existing client if it exists
       if (this.client) {
-        console.log('🛑 Parando cliente existente...');
-        await this.client.destroy();
+        try {
+          console.log('🛑 Parando cliente existente...');
+          await this.client.destroy();
+        } catch (destroyError) {
+          console.log('⚠️ Erro ao parar cliente (ignorando):', destroyError);
+        }
         this.client = null;
       }
       
-      // Wait a bit before reconnecting
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Wait longer before reconnecting to ensure cleanup
+      console.log('⏳ Aguardando limpeza do cliente...');
+      await new Promise(resolve => setTimeout(resolve, 5000));
       
       // Initialize new client
       console.log('🚀 Inicializando novo cliente...');
@@ -546,7 +551,99 @@ export class WhatsAppService {
       console.log('✅ Reconexão iniciada. Aguarde o QR code aparecer no console.');
     } catch (error) {
       console.error('❌ Erro durante a reconexão:', error);
-      throw error;
+      // Don't throw error to prevent server crash - just log it
+      console.log('🔄 Tentando recuperar WhatsApp automaticamente...');
+      this.isReady = false;
+      this.client = null;
+    }
+  }
+
+  // Method to restart WhatsApp service completely (safer method)
+  public async restart(): Promise<void> {
+    try {
+      console.log('🔄 Reiniciando serviço do WhatsApp completamente...');
+      
+      // Mark as not ready
+      this.isReady = false;
+      
+      // Force cleanup
+      if (this.client) {
+        try {
+          console.log('🛑 Forçando parada do cliente...');
+          this.client.removeAllListeners();
+          await this.client.destroy();
+        } catch (error) {
+          console.log('⚠️ Erro na limpeza (ignorando):', error);
+        } finally {
+          this.client = null;
+        }
+      }
+      
+      // Wait for complete cleanup
+      console.log('⏳ Aguardando limpeza completa...');
+      await new Promise(resolve => setTimeout(resolve, 8000));
+      
+      // Initialize fresh client
+      console.log('🚀 Inicializando cliente completamente novo...');
+      await this.initializeClient();
+      
+      console.log('✅ Reinicialização completa. Aguarde o QR code aparecer no console.');
+    } catch (error) {
+      console.error('❌ Erro durante reinicialização:', error);
+      this.isReady = false;
+      this.client = null;
+    }
+  }
+
+  // Method to force new authentication (clears saved credentials)
+  public async forceNewAuth(): Promise<void> {
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    try {
+      console.log('🔄 Forçando nova autenticação do WhatsApp...');
+      
+      // Mark as not ready
+      this.isReady = false;
+      
+      // Destroy existing client
+      if (this.client) {
+        try {
+          console.log('🛑 Parando cliente existente...');
+          this.client.removeAllListeners();
+          await this.client.destroy();
+        } catch (error) {
+          console.log('⚠️ Erro ao parar cliente (ignorando):', error);
+        } finally {
+          this.client = null;
+        }
+      }
+      
+      // Remove saved authentication data
+      try {
+        console.log('🗑️ Removendo dados de autenticação salvos...');
+        const authPath = path.join(process.cwd(), '.wwebjs_auth');
+        if (fs.existsSync(authPath)) {
+          fs.rmSync(authPath, { recursive: true, force: true });
+          console.log('✅ Dados de autenticação removidos');
+        }
+      } catch (error) {
+        console.log('⚠️ Erro ao remover dados de auth (ignorando):', error);
+      }
+      
+      // Wait for cleanup
+      console.log('⏳ Aguardando limpeza completa...');
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      
+      // Initialize new client
+      console.log('🚀 Inicializando cliente novo com nova autenticação...');
+      await this.initializeClient();
+      
+      console.log('✅ Nova autenticação iniciada. Escaneie o QR code para conectar um novo número.');
+    } catch (error) {
+      console.error('❌ Erro durante nova autenticação:', error);
+      this.isReady = false;
+      this.client = null;
     }
   }
 
