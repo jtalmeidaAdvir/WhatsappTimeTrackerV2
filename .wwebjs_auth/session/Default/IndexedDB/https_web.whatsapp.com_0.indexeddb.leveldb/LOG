@@ -1,19 +1,7 @@
-2025/06/27-16:19:44.302 587 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2025/06/27-16:19:44.302 587 Recovering log #238
-2025/06/27-16:19:44.315 587 Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000238.log 
-2025/06/27-16:19:46.144 589 Level-0 table #246: started
-2025/06/27-16:19:46.165 589 Level-0 table #246: 219877 bytes OK
-2025/06/27-16:19:46.185 589 Delete type=0 #238
-2025/06/27-16:19:46.186 589 Manual compaction at level-0 from '\x00#\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00$\x00\x00\x00' @ 0 : 0; will stop at (end)
-2025/06/27-16:19:48.498 589 Compacting 1@1 + 4@2 files
-2025/06/27-16:19:48.652 589 Generated table #247@1: 88053 keys, 2237130 bytes
-2025/06/27-16:19:48.748 589 Generated table #248@1: 32537 keys, 2373144 bytes
-2025/06/27-16:19:48.817 589 Generated table #249@1: 15672 keys, 2188604 bytes
-2025/06/27-16:19:48.903 589 Generated table #250@1: 69855 keys, 2071683 bytes
-2025/06/27-16:19:48.903 589 Compacted 1@1 + 4@2 files => 8870561 bytes
-2025/06/27-16:19:48.912 589 compacted to: files[ 0 0 4 0 0 0 0 ]
-2025/06/27-16:19:48.913 589 Delete type=2 #240
-2025/06/27-16:19:48.913 589 Delete type=2 #241
-2025/06/27-16:19:48.913 589 Delete type=2 #242
-2025/06/27-16:19:48.913 589 Delete type=2 #243
-2025/06/27-16:19:48.913 589 Delete type=2 #246
+2025/06/27-16:22:54.490 8f9 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/06/27-16:22:54.491 8f9 Recovering log #245
+2025/06/27-16:22:54.504 8f9 Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000245.log 
+2025/06/27-16:22:56.304 8f9 Level-0 table #253: started
+2025/06/27-16:22:56.324 8f9 Level-0 table #253: 245299 bytes OK
+2025/06/27-16:22:56.344 8f9 Delete type=0 #245
+2025/06/27-16:22:56.344 8f9 Manual compaction at level-0 from '\x00$\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00%\x00\x00\x00' @ 0 : 0; will stop at (end)

@@ -252,6 +252,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // WhatsApp reconnection endpoint
+  app.post("/api/whatsapp/reconnect", async (req, res) => {
+    try {
+      console.log("Attempting to reconnect WhatsApp...");
+      await whatsappService.reconnect();
+      res.json({ success: true, message: "WhatsApp reconnection initiated. Please scan the QR code again." });
+    } catch (error) {
+      console.error("WhatsApp reconnection error:", error);
+      res.status(500).json({ message: "Failed to reconnect WhatsApp" });
+    }
+  });
+
   // Reminder testing endpoints
   app.post("/api/reminders/test-clock-in", async (req, res) => {
     try {

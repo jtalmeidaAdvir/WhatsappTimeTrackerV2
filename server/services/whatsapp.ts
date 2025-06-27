@@ -521,6 +521,35 @@ export class WhatsAppService {
     return null;
   }
 
+  // Method to reconnect WhatsApp
+  public async reconnect(): Promise<void> {
+    try {
+      console.log('🔄 Iniciando reconexão do WhatsApp...');
+      
+      // Mark as not ready
+      this.isReady = false;
+      
+      // Destroy existing client if it exists
+      if (this.client) {
+        console.log('🛑 Parando cliente existente...');
+        await this.client.destroy();
+        this.client = null;
+      }
+      
+      // Wait a bit before reconnecting
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Initialize new client
+      console.log('🚀 Inicializando novo cliente...');
+      await this.initializeClient();
+      
+      console.log('✅ Reconexão iniciada. Aguarde o QR code aparecer no console.');
+    } catch (error) {
+      console.error('❌ Erro durante a reconexão:', error);
+      throw error;
+    }
+  }
+
 }
 
 export const whatsappService = new WhatsAppService();

@@ -27,6 +27,7 @@ interface SettingsForm {
   autoRegister: boolean;
   requireApproval: boolean;
   adminPhone: string;
+  whatsappNumber: string;
   twoFactor: boolean;
   locationVerify: boolean;
   auditLog: boolean;
@@ -53,6 +54,7 @@ export default function Settings() {
     autoRegister: false,
     requireApproval: true,
     adminPhone: "",
+    whatsappNumber: "",
     twoFactor: false,
     locationVerify: false,
     auditLog: true,
@@ -87,6 +89,7 @@ export default function Settings() {
         autoRegister: settingsMap.autoRegister === "true",
         requireApproval: settingsMap.requireApproval !== "false",
         adminPhone: settingsMap.adminPhone || "",
+        whatsappNumber: settingsMap.whatsappNumber || "",
         twoFactor: settingsMap.twoFactor === "true",
         locationVerify: settingsMap.locationVerify === "true",
         auditLog: settingsMap.auditLog !== "false",
@@ -332,6 +335,64 @@ export default function Settings() {
                   value={formData.adminPhone}
                   onChange={(e) => setFormData({...formData, adminPhone: e.target.value})}
                 />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* WhatsApp Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <span className="mr-2">📱</span>
+                WhatsApp
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="whatsapp-number">Número Principal do WhatsApp</Label>
+                <Input 
+                  id="whatsapp-number" 
+                  placeholder="+5511999999999"
+                  value={formData.whatsappNumber}
+                  onChange={(e) => setFormData({...formData, whatsappNumber: e.target.value})}
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Número que receberá as mensagens dos funcionários
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => window.open('/whatsapp-integration', '_blank')}
+                >
+                  Configurar WhatsApp
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch("/api/whatsapp/reconnect", { method: "POST" });
+                      if (response.ok) {
+                        toast({
+                          title: "WhatsApp",
+                          description: "Reconexão iniciada. Escaneie o QR code novamente.",
+                        });
+                      } else {
+                        throw new Error("Falha na reconexão");
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Erro",
+                        description: "Erro ao reconectar WhatsApp",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                >
+                  Reconectar
+                </Button>
               </div>
             </CardContent>
           </Card>

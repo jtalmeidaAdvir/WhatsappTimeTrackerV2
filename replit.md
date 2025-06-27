@@ -147,6 +147,11 @@ Changelog:
 - June 27, 2025. Enhanced user experience by removing location barriers while maintaining location tracking capabilities
 - June 27, 2025. Automatic location capture attempts via WhatsApp Web API when available
 - June 27, 2025. Improved feedback messages with location status and helpful suggestions for future use
+- June 27, 2025. Successfully migrated from Replit Agent to standard Replit environment
+- June 27, 2025. Added WhatsApp number configuration in settings - administrators can now configure and change the main WhatsApp number
+- June 27, 2025. Implemented WhatsApp reconnection functionality - allows switching between different WhatsApp accounts/numbers
+- June 27, 2025. Created reconnection endpoint (/api/whatsapp/reconnect) for seamless WhatsApp account switching
+- June 27, 2025. Enhanced settings page with dedicated WhatsApp configuration section
 ```
 
 ## User Preferences
