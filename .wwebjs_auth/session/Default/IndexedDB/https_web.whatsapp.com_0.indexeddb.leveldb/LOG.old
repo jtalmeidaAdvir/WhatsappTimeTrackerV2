@@ -1,17 +1,17 @@
-2025/06/27-19:51:53.598 166f Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2025/06/27-19:51:53.599 166f Recovering log #153
-2025/06/27-19:51:53.612 166f Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000153.log 
-2025/06/27-19:51:55.396 1671 Level-0 table #160: started
-2025/06/27-19:51:55.444 1671 Level-0 table #160: 252156 bytes OK
-2025/06/27-19:51:55.454 1671 Delete type=0 #153
-2025/06/27-19:51:55.459 1671 Manual compaction at level-0 from '\x00$\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00%\x00\x00\x00' @ 0 : 0; will stop at (end)
-2025/06/27-19:51:57.409 166f Compacting 1@1 + 3@2 files
-2025/06/27-19:51:57.559 166f Generated table #161@1: 59635 keys, 2221757 bytes
-2025/06/27-19:51:57.662 166f Generated table #162@1: 8229 keys, 2169487 bytes
-2025/06/27-19:51:57.805 166f Generated table #163@1: 54841 keys, 1983416 bytes
-2025/06/27-19:51:57.806 166f Compacted 1@1 + 3@2 files => 6374660 bytes
-2025/06/27-19:51:57.811 166f compacted to: files[ 0 0 3 0 0 0 0 ]
-2025/06/27-19:51:57.811 166f Delete type=2 #155
-2025/06/27-19:51:57.812 166f Delete type=2 #156
-2025/06/27-19:51:57.812 166f Delete type=2 #157
-2025/06/27-19:51:57.812 166f Delete type=2 #160
+2025/06/27-21:42:42.607 523 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/06/27-21:42:42.608 523 Recovering log #171
+2025/06/27-21:42:42.635 523 Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000171.log 
+2025/06/27-21:42:44.495 528 Level-0 table #178: started
+2025/06/27-21:42:44.529 528 Level-0 table #178: 372821 bytes OK
+2025/06/27-21:42:44.565 528 Delete type=0 #171
+2025/06/27-21:42:44.567 523 Manual compaction at level-0 from '\x00'\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00(\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/06/27-21:42:46.492 525 Compacting 1@1 + 3@2 files
+2025/06/27-21:42:46.629 525 Generated table #179@1: 61570 keys, 2221796 bytes
+2025/06/27-21:42:46.692 525 Generated table #180@1: 9082 keys, 2167338 bytes
+2025/06/27-21:42:46.757 525 Generated table #181@1: 55873 keys, 2075977 bytes
+2025/06/27-21:42:46.757 525 Compacted 1@1 + 3@2 files => 6465111 bytes
+2025/06/27-21:42:46.761 525 compacted to: files[ 0 0 3 0 0 0 0 ]
+2025/06/27-21:42:46.762 525 Delete type=2 #173
+2025/06/27-21:42:46.762 525 Delete type=2 #174
+2025/06/27-21:42:46.762 525 Delete type=2 #175
+2025/06/27-21:42:46.762 525 Delete type=2 #178

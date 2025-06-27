@@ -9,9 +9,6 @@ import { schedulerService } from "./services/scheduler.js";
 
 const app = express();
 
-// Trust proxy for Replit environment
-app.set('trust proxy', true);
-
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: false, // Disable for Vite in development
@@ -25,13 +22,20 @@ app.use(cors({
   credentials: true
 }));
 
-// Rate limiting
+// Trust proxy for Replit environment (set after rate limiting setup)
+app.set('trust proxy', 1);
+
+// Rate limiting with proper proxy configuration
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: { message: "Too many requests, please try again later." },
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    // Use X-Forwarded-For header in Replit environment
+    return req.headers['x-forwarded-for'] as string || req.ip || 'unknown';
+  },
 });
 
 app.use('/api/', limiter);
@@ -40,7 +44,11 @@ app.use('/api/', limiter);
 const webhookLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
   max: 50, // limit each IP to 50 webhook requests per minute
-  message: { message: "Webhook rate limit exceeded." }
+  message: { message: "Webhook rate limit exceeded." },
+  keyGenerator: (req) => {
+    // Use X-Forwarded-For header in Replit environment
+    return req.headers['x-forwarded-for'] as string || req.ip || 'unknown';
+  },
 });
 
 app.use('/api/whatsapp/webhook', webhookLimiter);
