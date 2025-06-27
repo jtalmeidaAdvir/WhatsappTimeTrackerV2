@@ -190,6 +190,10 @@ Changelog:
 - June 27, 2025. Updated status labels: "A trabalhar", "Em pausa", "Saiu", "Ausente"
 - June 27, 2025. Corrected verb forms throughout interface (registar → registou, processar → processada)
 - June 27, 2025. Application now fully localized for Portuguese market with proper PT-PT terminology
+- June 27, 2025. Successfully completed migration from Replit Agent to standard Replit environment
+- June 27, 2025. Fixed rate limiting configuration issues for proper Replit deployment
+- June 27, 2025. Created complete deployment package for user's own server with PM2 configuration
+- June 27, 2025. Added deployment guide, ecosystem config, and build scripts for production deployment
 ```
 
 ## User Preferences
