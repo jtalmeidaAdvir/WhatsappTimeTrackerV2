@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Settings as SettingsIcon, Bell, Clock, Users, Shield } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -32,6 +33,7 @@ interface SettingsForm {
   locationVerify: boolean;
   auditLog: boolean;
   backupEnable: boolean;
+  timezone: string;
 }
 
 export default function Settings() {
@@ -62,6 +64,7 @@ export default function Settings() {
     locationVerify: false,
     auditLog: true,
     backupEnable: true,
+    timezone: "Europe/Lisbon",
   });
 
   const { data: settings = [], isLoading } = useQuery<Setting[]>({
@@ -151,6 +154,7 @@ export default function Settings() {
         locationVerify: settingsMap.locationVerify === "true",
         auditLog: settingsMap.auditLog !== "false",
         backupEnable: settingsMap.backupEnable !== "false",
+        timezone: settingsMap.timezone || "Europe/Lisbon",
       });
     }
   }, [settings]);
@@ -355,6 +359,26 @@ export default function Settings() {
                   value={formData.maxBreak}
                   onChange={(e) => setFormData({...formData, maxBreak: parseInt(e.target.value) || 0})}
                 />
+              </div>
+              <div>
+                <Label htmlFor="timezone">Fuso Horário</Label>
+                <Select value={formData.timezone} onValueChange={(value) => setFormData({...formData, timezone: value})}>
+                  <SelectTrigger id="timezone">
+                    <SelectValue placeholder="Selecione o fuso horário" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Europe/Lisbon">🇵🇹 Portugal (Europe/Lisbon)</SelectItem>
+                    <SelectItem value="Europe/Madrid">🇪🇸 Espanha (Europe/Madrid)</SelectItem>
+                    <SelectItem value="Europe/London">🇬🇧 Reino Unido (Europe/London)</SelectItem>
+                    <SelectItem value="Europe/Paris">🇫🇷 França (Europe/Paris)</SelectItem>
+                    <SelectItem value="Europe/Berlin">🇩🇪 Alemanha (Europe/Berlin)</SelectItem>
+                    <SelectItem value="America/New_York">🇺🇸 New York (America/New_York)</SelectItem>
+                    <SelectItem value="America/Sao_Paulo">🇧🇷 Brasil (America/Sao_Paulo)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Define o fuso horário usado para registos de presença e lembretes automáticos
+                </p>
               </div>
             </CardContent>
           </Card>

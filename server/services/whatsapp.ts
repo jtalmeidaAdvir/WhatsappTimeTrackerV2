@@ -1,6 +1,7 @@
 import { storage } from "../storage";
 import type { InsertAttendanceRecord } from "@shared/schema";
 import qrcode from 'qrcode-terminal';
+import { getPortugalTime, getPortugalTimeString, createPortugalTimestamp } from '../utils/timezone.js';
 
 export class WhatsAppService {
   private readonly validCommands = ['entrada', 'saida', 'pausa', 'volta', 'horas'];
@@ -306,11 +307,11 @@ export class WhatsAppService {
     }
 
     const latestRecord = await storage.getLatestAttendanceRecord(employeeId);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayPortugal = getPortugalTime();
+    todayPortugal.setHours(0, 0, 0, 0);
 
-    // Check if there's already a record today
-    const todaysRecords = await storage.getAttendanceRecords(employeeId, today);
+    // Check if there's already a record today (Portugal timezone)
+    const todaysRecords = await storage.getAttendanceRecords(employeeId, todayPortugal);
     
     switch (command) {
       case 'entrada':
@@ -360,8 +361,7 @@ export class WhatsAppService {
       address: location?.address
     });
 
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const timeStr = getPortugalTimeString();
     
     let response = `✅ Entrada registada com sucesso!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
     
@@ -398,8 +398,7 @@ export class WhatsAppService {
       address: location?.address
     });
 
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const timeStr = getPortugalTimeString();
     
     let response = `✅ Saída registada com sucesso!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
     
@@ -430,8 +429,7 @@ export class WhatsAppService {
       address: location?.address
     });
 
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const timeStr = getPortugalTimeString();
     
     return `⏸️ Pausa iniciada!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}\n\n💡 Para voltar ao trabalho, escreve *volta*`;
   }
@@ -450,8 +448,7 @@ export class WhatsAppService {
       address: location?.address
     });
 
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const timeStr = getPortugalTimeString();
     
     return `▶️ Volta da pausa registada!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
   }

@@ -1,5 +1,6 @@
 import { storage } from '../storage.js';
 import { whatsappService } from './whatsapp.js';
+import { isPortugalTime, getPortugalTime, getPortugalTimeString } from '../utils/timezone.js';
 
 export class SchedulerService {
   private intervals: NodeJS.Timeout[] = [];
@@ -26,17 +27,19 @@ export class SchedulerService {
   }
 
   private async checkReminderTimes() {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
+    // Usar fuso horário de Portugal
+    const portugalTime = getPortugalTime();
+    console.log(`⏰ Verificando lembretes - Hora em Portugal: ${getPortugalTimeString()}`);
     
-    // Lembrete de entrada às 09:00
-    if (hours === 9 && minutes === 0) {
+    // Lembrete de entrada às 09:00 (Portugal)
+    if (isPortugalTime(9, 0)) {
+      console.log('📢 Hora de lembrete de entrada (09:00 Portugal)');
       await this.sendClockInReminders();
     }
     
-    // Lembrete de saída às 18:00
-    if (hours === 18 && minutes === 0) {
+    // Lembrete de saída às 18:00 (Portugal)
+    if (isPortugalTime(18, 0)) {
+      console.log('📢 Hora de lembrete de saída (18:00 Portugal)');
       await this.sendClockOutReminders();
     }
   }
@@ -134,7 +137,7 @@ Se ainda estás a trabalhar, podes ignorar esta mensagem. 😊`;
       const employees = await storage.getAllEmployees();
       const activeEmployees = employees.filter(emp => emp.isActive);
       
-      const now = new Date();
+      const now = getPortugalTime();
       
       for (const employee of activeEmployees) {
         // Obter o último registo do funcionário
