@@ -186,7 +186,7 @@ export class WhatsAppService {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     
-    return `⏸️ Pausa iniciada!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
+    return `⏸️ Pausa iniciada!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}\n\n💡 Para voltar ao trabalho, escreve *volta*`;
   }
 
   private async handleVolta(employeeId: number, employeeName: string, latestRecord: any, location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
