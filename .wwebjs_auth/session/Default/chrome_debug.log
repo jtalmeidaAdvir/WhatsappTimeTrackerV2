@@ -1,0 +1,23 @@
+[0627/194412.762:WARNING:quota_database.cc(1015)] Quota database is too new.
+[0627/194412.762:ERROR:quota_database.cc(929)] Could not open the quota database, resetting.
+[0627/194413.176:WARNING:sqlite_persistent_store_backend_base.cc(176)] Cookie database is too new.
+[0627/194413.185:ERROR:backend_impl.cc(1423)] Unable to map Index file
+[0627/194413.334:INFO:CONSOLE(163)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/yK/r/3n1WXGy7Khu.js (163)
+[0627/194413.402:ERROR:indexed_db_factory_impl.cc(918)] IndexedDB backing store had unknown schema, treating it as failure to open.
+[0627/194413.403:ERROR:indexed_db_factory_impl.cc(708)] Got corruption for { origin: https://web.whatsapp.com, top-level site: https://whatsapp.com, nonce: <null>, ancestor chain bit: Same-Site }, Unknown corruption
+[0627/194413.417:ERROR:indexed_db_factory_impl.cc(844)] IndexedDB recovering from a corrupted (and deleted) database.
+[0627/194418.209:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Feature xr-spatial-tracking's parameters are ignored.", source:  (0)
+[0627/194418.209:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'attribution-reporting'.", source:  (0)
+[0627/194418.209:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'compute-pressure'.", source:  (0)
+[0627/194418.209:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'interest-cohort'.", source:  (0)
+[0627/194418.209:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'private-state-token-issuance'.", source:  (0)
+[0627/194418.209:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'shared-storage'.", source:  (0)
+[0627/194418.209:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'shared-storage-select-url'.", source:  (0)
+[0627/194418.210:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'private-state-token-redemption'.", source:  (0)
+[0627/194418.210:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'unload'.", source:  (0)
+[0627/194418.210:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'window-management'.", source:  (0)
+[0627/194418.211:INFO:CONSOLE(0)] "Document-Policy HTTP header: Unrecognized document policy feature name include-js-call-stacks-in-crash-reports.", source: https://web.whatsapp.com/ (0)
+[0627/194429.266:INFO:CONSOLE(163)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/yK/r/3n1WXGy7Khu.js (163)
+[0627/194649.547:INFO:CONSOLE(163)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/yK/r/3n1WXGy7Khu.js (163)
+[0627/195002.177:INFO:CONSOLE(904)] "Failed to parse video contentType: video/mp4; codecs=avc1.42000a", source: https://static.whatsapp.net/rsrc.php/v4iJJ14/yQ/l/rt/mmUbvu2yT09.js (904)
+[0627/195002.177:INFO:CONSOLE(904)] "Failed to parse video contentType: video/mp4; codecs=hev1.1.6.L93.B0", source: https://static.whatsapp.net/rsrc.php/v4iJJ14/yQ/l/rt/mmUbvu2yT09.js (904)
