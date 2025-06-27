@@ -1,2 +1,3 @@
-2025/06/27-15:23:31.987 887 Creating DB /home/runner/workspace/.wwebjs_auth/session/Default/shared_proto_db since it was missing.
-2025/06/27-15:23:31.998 887 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/shared_proto_db/MANIFEST-000001
+2025/06/27-15:30:52.290 ba5 Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/shared_proto_db/MANIFEST-000001
+2025/06/27-15:30:52.290 ba5 Recovering log #3
+2025/06/27-15:30:52.290 ba5 Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/shared_proto_db/000003.log 
