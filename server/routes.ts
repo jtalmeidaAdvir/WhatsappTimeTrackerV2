@@ -212,6 +212,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // WhatsApp status and test route
+  app.get("/api/whatsapp/status", async (req, res) => {
+    try {
+      const isReady = whatsappService.isWhatsAppReady();
+      res.json({ 
+        isReady, 
+        service: "WhatsApp-Web.js",
+        status: isReady ? "Connected" : "Connecting...",
+        message: isReady ? "WhatsApp está pronto para receber mensagens" : "Aguarde a conexão com o WhatsApp"
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get WhatsApp status" });
+    }
+  });
+
+  // Test message sending
+  app.post("/api/whatsapp/test-send", async (req, res) => {
+    try {
+      const { phone, message } = req.body;
+      
+      if (!phone || !message) {
+        return res.status(400).json({ message: "Phone and message are required" });
+      }
+
+      const isReady = whatsappService.isWhatsAppReady();
+      if (!isReady) {
+        return res.status(400).json({ message: "WhatsApp client is not ready" });
+      }
+
+      console.log(`Testing message send to ${phone}: ${message}`);
+      await whatsappService.sendMessage(phone, message);
+      
+      res.json({ success: true, message: "Test message sent successfully" });
+    } catch (error) {
+      console.error("Test send error:", error);
+      res.status(500).json({ message: "Failed to send test message" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
