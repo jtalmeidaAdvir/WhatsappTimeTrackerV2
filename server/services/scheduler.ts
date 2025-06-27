@@ -14,8 +14,15 @@ export class SchedulerService {
       this.checkReminderTimes();
     }, 60000); // 60 segundos
 
+    // Verificar pausas prolongadas a cada 5 minutos
+    const pauseCheckInterval = setInterval(async () => {
+      await this.checkLongBreaks();
+    }, 300000); // 5 minutos
+
     this.intervals.push(checkInterval);
+    this.intervals.push(pauseCheckInterval);
     console.log('📅 Sistema de lembretes automáticos iniciado');
+    console.log('⏰ Sistema de controlo de pausas iniciado');
   }
 
   private async checkReminderTimes() {
@@ -118,6 +125,73 @@ Se ainda estás a trabalhar, podes ignorar esta mensagem. 😊`;
   async testClockOutReminder() {
     console.log('🧪 Teste manual: Enviando lembretes de saída');
     await this.sendClockOutReminders();
+  }
+
+  private async checkLongBreaks() {
+    console.log('🔍 Verificando pausas prolongadas...');
+    
+    try {
+      const employees = await storage.getAllEmployees();
+      const activeEmployees = employees.filter(emp => emp.isActive);
+      
+      const now = new Date();
+      
+      for (const employee of activeEmployees) {
+        // Obter o último registo do funcionário
+        const latestRecord = await storage.getLatestAttendanceRecord(employee.id);
+        
+        if (latestRecord && latestRecord.type === 'pausa') {
+          const pauseStartTime = new Date(latestRecord.timestamp);
+          const timeDifferenceMinutes = Math.floor((now.getTime() - pauseStartTime.getTime()) / (1000 * 60));
+          
+          // Se está em pausa há mais de 15 minutos
+          if (timeDifferenceMinutes >= 15) {
+            // Verificar se já enviámos lembrete recentemente (últimos 30 minutos)
+            const recentMessages = await storage.getAttendanceRecords(employee.id);
+            const hasRecentPauseReminder = recentMessages.some(record => {
+              if (record.type === 'pausa' && record.timestamp) {
+                const recordTime = new Date(record.timestamp);
+                const minutesAgo = Math.floor((now.getTime() - recordTime.getTime()) / (1000 * 60));
+                return minutesAgo <= 30;
+              }
+              return false;
+            });
+            
+            // Só enviar se não enviou lembrete recentemente
+            if (!hasRecentPauseReminder || timeDifferenceMinutes >= 30) {
+              await this.sendLongBreakReminder(employee, timeDifferenceMinutes);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('❌ Erro ao verificar pausas prolongadas:', error);
+    }
+  }
+
+  private async sendLongBreakReminder(employee: any, minutesOnBreak: number) {
+    const message = `🔔 *Lembrete de Pausa*
+
+Olá ${employee.name}! 👋
+
+⏰ Estás em pausa há ${minutesOnBreak} minutos.
+
+💡 Não te esqueças de registar o teu regresso:
+👉 Envia: *volta* ou *voltei*
+
+Se ainda precisas de mais tempo, podes ignorar esta mensagem. 😊`;
+
+    try {
+      await whatsappService.sendMessage(employee.phone, message);
+      console.log(`📤 Lembrete de pausa prolongada enviado para ${employee.name} (${minutesOnBreak} min)`);
+    } catch (error) {
+      console.error(`❌ Erro ao enviar lembrete de pausa para ${employee.name}:`, error);
+    }
+  }
+
+  async testLongBreakReminder() {
+    console.log('🧪 Teste manual: Verificando pausas prolongadas');
+    await this.checkLongBreaks();
   }
 
   // Método para parar o agendador

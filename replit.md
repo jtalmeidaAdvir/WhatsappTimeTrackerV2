@@ -167,6 +167,10 @@ Changelog:
 - June 27, 2025. Added fallback to numbered options when buttons not supported - ensures compatibility across all devices
 - June 27, 2025. Created test interface for quick reply buttons in WhatsApp Integration page
 - June 27, 2025. Enhanced user experience with clickable command options and automatic number recognition (1-5)
+- June 27, 2025. Implemented automatic break reminder system - employees on break for 15+ minutes receive gentle reminders to return
+- June 27, 2025. Added pause control verification every 5 minutes to prevent excessive break times
+- June 27, 2025. Created smart reminder logic that avoids spam by tracking recent notifications
+- June 27, 2025. Added test interface for break reminders in WhatsApp Integration page
 ```
 
 ## User Preferences

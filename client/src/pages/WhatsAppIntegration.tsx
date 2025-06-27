@@ -107,6 +107,26 @@ export default function WhatsAppIntegration() {
         },
     });
 
+    const testLongBreakReminderMutation = useMutation({
+        mutationFn: async () => {
+            const response = await apiRequest("POST", "/api/reminders/test-long-breaks", {});
+            return response.json();
+        },
+        onSuccess: (data) => {
+            toast({
+                title: "Lembretes de pausa verificados",
+                description: data.message,
+            });
+        },
+        onError: () => {
+            toast({
+                title: "Erro nos lembretes de pausa",
+                description: "Não foi possível verificar pausas prolongadas.",
+                variant: "destructive",
+            });
+        },
+    });
+
     const handleTestMessage = () => {
         if (!testPhone || !testMessage) {
             toast({
@@ -430,6 +450,25 @@ export default function WhatsAppIntegration() {
                                     className="w-full"
                                 >
                                     {testClockOutReminderMutation.isPending ? "Enviando..." : "Testar Agora"}
+                                </Button>
+                            </div>
+                            
+                            <div className="p-4 border rounded-lg">
+                                <div className="flex items-center space-x-2 mb-3">
+                                    <Clock className="h-5 w-5 text-amber-500" />
+                                    <h4 className="font-semibold text-gray-900">Lembrete de Pausas</h4>
+                                </div>
+                                <p className="text-sm text-gray-600 mb-3">
+                                    Funcionários em pausa há mais de <strong>15 minutos</strong> recebem lembrete para voltar ao trabalho.
+                                </p>
+                                <Button
+                                    onClick={() => testLongBreakReminderMutation.mutate()}
+                                    disabled={testLongBreakReminderMutation.isPending}
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full"
+                                >
+                                    {testLongBreakReminderMutation.isPending ? "Enviando..." : "Testar Agora"}
                                 </Button>
                             </div>
                         </div>

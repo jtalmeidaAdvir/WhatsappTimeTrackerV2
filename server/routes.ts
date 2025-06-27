@@ -322,6 +322,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test long break reminders
+  app.post("/api/reminders/test-long-breaks", async (req, res) => {
+    try {
+      await schedulerService.testLongBreakReminder();
+      res.json({ success: true, message: "Long break reminders checked and sent if applicable" });
+    } catch (error) {
+      console.error("Test long break reminder error:", error);
+      res.status(500).json({ message: "Failed to check long break reminders" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
