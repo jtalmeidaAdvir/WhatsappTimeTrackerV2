@@ -5,8 +5,11 @@ import { EmployeeTable } from "@/components/EmployeeTable";
 import { WhatsAppCommands } from "@/components/WhatsAppCommands";
 import { RecentMessages } from "@/components/RecentMessages";
 import { QuickActions } from "@/components/QuickActions";
-import { Users, CheckCircle, Pause, MessageSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Users, CheckCircle, Pause, MessageSquare, RefreshCw } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
+import { queryClient } from "@/lib/queryClient";
+import { useState, useEffect } from "react";
 
 interface Stats {
   activeEmployees: number;
@@ -16,10 +19,56 @@ interface Stats {
 }
 
 export default function Dashboard() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [nextUpdate, setNextUpdate] = useState(60);
+
   const { data: stats, isLoading: statsLoading } = useQuery<Stats>({
     queryKey: ["/api/stats"],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 60000, // Refresh every minute
   });
+
+  // Auto-refresh every minute with countdown
+  useEffect(() => {
+    // Countdown timer
+    const countdownInterval = setInterval(() => {
+      setNextUpdate(prev => {
+        if (prev <= 1) {
+          return 60; // Reset to 60 seconds
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    // Auto-refresh every minute
+    const refreshInterval = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/employees/status"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/whatsapp/messages"] });
+      setLastUpdate(new Date());
+      setNextUpdate(60); // Reset countdown
+    }, 60000);
+
+    return () => {
+      clearInterval(countdownInterval);
+      clearInterval(refreshInterval);
+    };
+  }, []);
+
+  const handleManualRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["/api/stats"] }),
+        queryClient.invalidateQueries({ queryKey: ["/api/employees/status"] }),
+        queryClient.invalidateQueries({ queryKey: ["/api/whatsapp/messages"] })
+      ]);
+      setLastUpdate(new Date());
+      setNextUpdate(60); // Reset countdown after manual refresh
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -34,13 +83,31 @@ export default function Dashboard() {
               <p className="text-gray-600 mt-1">Visão geral do controle de ponto</p>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Manual Refresh Button */}
+              <Button
+                onClick={handleManualRefresh}
+                disabled={isRefreshing}
+                variant="outline"
+                size="sm"
+                className="flex items-center space-x-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <span>Atualizar</span>
+              </Button>
+              
               {/* WhatsApp Status */}
               <div className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 <span className="font-medium">WhatsApp Conectado</span>
               </div>
-              <div className="text-sm text-gray-500">
-                <span>{formatDateTime(new Date())}</span>
+              
+              {/* Auto-refresh status */}
+              <div className="text-sm text-gray-500 text-right">
+                <div className="text-xs">Última atualização:</div>
+                <div className="font-medium">{formatDateTime(lastUpdate)}</div>
+                <div className="text-xs text-blue-600">
+                  Próxima em {nextUpdate}s
+                </div>
               </div>
             </div>
           </div>

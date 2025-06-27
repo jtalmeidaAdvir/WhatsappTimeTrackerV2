@@ -178,6 +178,9 @@ Changelog:
 - June 27, 2025. Fixed database field mapping issues in reports - resolved TypeScript inconsistencies between schema and API responses
 - June 27, 2025. Improved report filtering logic for date ranges (today, week, month) and employee-specific reports
 - June 27, 2025. Added CSV export functionality with complete attendance data including GPS coordinates
+- June 27, 2025. Implemented manual refresh button on dashboard with visual loading indicator
+- June 27, 2025. Added automatic dashboard refresh every minute with live countdown timer
+- June 27, 2025. Enhanced dashboard header with last update timestamp and next refresh countdown
 ```
 
 ## User Preferences
