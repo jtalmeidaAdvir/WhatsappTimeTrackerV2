@@ -390,10 +390,12 @@ export default function WhatsAppIntegration() {
                         <div className="p-4 bg-green-50 rounded-lg">
                             <div className="flex items-center space-x-2 mb-2">
                                 <CheckCircle className="h-5 w-5 text-green-600" />
-                                <h4 className="font-semibold text-green-800">Sistema Ativo</h4>
+                                <h4 className="font-semibold text-green-800">Sistema Atualizado</h4>
                             </div>
                             <p className="text-sm text-green-700">
-                                O sistema de lembretes automáticos está ativo e funcionando. Os lembretes são enviados automaticamente nos horários configurados.
+                                ✅ Registo automático sem localização obrigatória<br/>
+                                ✅ Lembretes automáticos às 09:00 e 18:00<br/>
+                                ✅ Sistema incentiva o uso de localização com dicas educativas
                             </p>
                         </div>
                     </CardContent>

@@ -142,6 +142,11 @@ Changelog:
 - June 27, 2025. Clock-out reminders sent only to employees with entry but no exit registered
 - June 27, 2025. Created test interface for manual reminder testing with dedicated endpoints
 - June 27, 2025. All reminder messages personalized with employee names and proper Portuguese formatting
+- June 27, 2025. Made location registration automatic and non-mandatory - employees can register without requiring GPS location
+- June 27, 2025. System now registers attendance immediately and provides educational tips about location benefits
+- June 27, 2025. Enhanced user experience by removing location barriers while maintaining location tracking capabilities
+- June 27, 2025. Automatic location capture attempts via WhatsApp Web API when available
+- June 27, 2025. Improved feedback messages with location status and helpful suggestions for future use
 ```
 
 ## User Preferences
