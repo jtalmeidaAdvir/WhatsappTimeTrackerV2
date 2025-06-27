@@ -124,6 +124,9 @@ Changelog:
 - June 27, 2025. Implemented automatic location request system - employees now receive clear instructions to send location before time tracking commands
 - June 27, 2025. Added location-only message detection - system captures GPS coordinates when sent and saves temporarily for next command
 - June 27, 2025. Enhanced WhatsApp integration to guide users through location sharing process for all time tracking activities
+- June 27, 2025. Added Google Maps integration - users can click on GPS location in time records to open location in Google Maps
+- June 27, 2025. System now requires location for all entrada/saida commands and provides clear instructions for location sharing
+- June 27, 2025. Location data automatically saved with coordinates and address for all time tracking entries
 ```
 
 ## User Preferences

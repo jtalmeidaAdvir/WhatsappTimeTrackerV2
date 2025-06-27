@@ -144,10 +144,14 @@ export default function TimeRecords() {
                           <div className="text-sm text-gray-500 flex items-center">
                             {record.message}
                             {(record.latitude || record.longitude) && (
-                              <div className="ml-2 flex items-center text-blue-600" title={`Localização: ${record.latitude}, ${record.longitude}${record.address ? ` - ${record.address}` : ''}`}>
+                              <button
+                                onClick={() => window.open(`https://www.google.com/maps?q=${record.latitude},${record.longitude}`, '_blank')}
+                                className="ml-2 flex items-center text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
+                                title={`Clique para abrir no Google Maps - Localização: ${record.latitude}, ${record.longitude}${record.address ? ` - ${record.address}` : ''}`}
+                              >
                                 <MapPin className="h-3 w-3 mr-1" />
                                 <span className="text-xs">GPS</span>
-                              </div>
+                              </button>
                             )}
                           </div>
                         </div>
