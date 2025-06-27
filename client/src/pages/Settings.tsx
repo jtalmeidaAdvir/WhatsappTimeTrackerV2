@@ -358,48 +358,39 @@ export default function Settings() {
                   onChange={(e) => setFormData({...formData, whatsappNumber: e.target.value})}
                 />
                 <p className="text-sm text-muted-foreground mt-1">
-                  Número que receberá as mensagens dos funcionários. Para trocar de número, clique em "Reconectar" após salvar as configurações.
+                  Número que receberá as mensagens dos funcionários. Para trocar de número, clique em "Trocar Número" após salvar as configurações.
                 </p>
               </div>
-              <div className="flex gap-2">
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={() => window.location.href = '/whatsapp'}
-                >
-                  Configurar WhatsApp
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  disabled={isReconnecting}
-                  onClick={async () => {
-                    setIsReconnecting(true);
-                    try {
-                      const response = await fetch("/api/whatsapp/reconnect", { method: "POST" });
-                      if (response.ok) {
-                        toast({
-                          title: "WhatsApp",
-                          description: "Dados de autenticação removidos. Aguarde alguns segundos e verifique o console para o novo QR code.",
-                        });
-                      } else {
-                        throw new Error("Falha na reconexão");
-                      }
-                    } catch (error) {
+              <Button 
+                type="button" 
+                variant="outline"
+                disabled={isReconnecting}
+                onClick={async () => {
+                  setIsReconnecting(true);
+                  try {
+                    const response = await fetch("/api/whatsapp/reconnect", { method: "POST" });
+                    if (response.ok) {
                       toast({
-                        title: "Erro",
-                        description: "Erro ao reconectar WhatsApp. Tente novamente.",
-                        variant: "destructive",
+                        title: "WhatsApp",
+                        description: "Dados de autenticação removidos. Aguarde alguns segundos e verifique o console para o novo QR code.",
                       });
-                    } finally {
-                      // Reset loading state after 10 seconds
-                      setTimeout(() => setIsReconnecting(false), 10000);
+                    } else {
+                      throw new Error("Falha na reconexão");
                     }
-                  }}
-                >
-                  {isReconnecting ? "Reconectando..." : "Reconectar"}
-                </Button>
-              </div>
+                  } catch (error) {
+                    toast({
+                      title: "Erro",
+                      description: "Erro ao reconectar WhatsApp. Tente novamente.",
+                      variant: "destructive",
+                    });
+                  } finally {
+                    // Reset loading state after 10 seconds
+                    setTimeout(() => setIsReconnecting(false), 10000);
+                  }
+                }}
+              >
+                {isReconnecting ? "Reconectando..." : "Trocar Número"}
+              </Button>
             </CardContent>
           </Card>
         </div>

@@ -1,4 +1,0 @@
-2025/06/27-16:33:01.666 f5a Reusing MANIFEST /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2025/06/27-16:33:01.667 f5a Recovering log #274
-2025/06/27-16:33:01.681 f5a Reusing old log /home/runner/workspace/.wwebjs_auth/session/Default/IndexedDB/https_web.whatsapp.com_0.indexeddb.leveldb/000274.log 
-2025/06/27-16:33:03.269 f5f Manual compaction at level-0 from '\x00)\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00*\x00\x00\x00' @ 0 : 0; will stop at (end)
