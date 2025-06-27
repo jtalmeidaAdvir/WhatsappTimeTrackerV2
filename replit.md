@@ -127,6 +127,9 @@ Changelog:
 - June 27, 2025. Added Google Maps integration - users can click on GPS location in time records to open location in Google Maps
 - June 27, 2025. System now requires location for all entrada/saida commands and provides clear instructions for location sharing
 - June 27, 2025. Location data automatically saved with coordinates and address for all time tracking entries
+- June 27, 2025. Fixed employee name display in time records - system now uses JOIN query to show correct names even for deleted employees
+- June 27, 2025. Implemented functional quick reports - users can generate reports for today, this week, this month, by employee, and custom date ranges
+- June 27, 2025. Reports display real attendance data with employee names, action badges, timestamps, and GPS location links
 ```
 
 ## User Preferences
