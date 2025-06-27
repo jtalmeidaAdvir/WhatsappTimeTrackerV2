@@ -91,7 +91,27 @@ export default function Settings() {
     if (isReconnecting) {
       // Check immediately and then every 2 seconds
       checkForQRCode();
-      interval = setInterval(checkForQRCode, 2000);
+      interval = setInterval(async () => {
+        await checkForQRCode();
+        
+        // Also check if WhatsApp is ready (connected)
+        try {
+          const statusResponse = await fetch("/api/whatsapp/status");
+          const statusData = await statusResponse.json();
+          if (statusData.isReady) {
+            // WhatsApp connected successfully
+            setIsReconnecting(false);
+            setShowQrCode(false);
+            setQrCode(null);
+            toast({
+              title: "WhatsApp Conectado",
+              description: "Novo número conectado com sucesso! O sistema está pronto para receber mensagens.",
+            });
+          }
+        } catch (error) {
+          console.error("Error checking WhatsApp status:", error);
+        }
+      }, 2000);
     } else {
       setShowQrCode(false);
       setQrCode(null);
@@ -100,7 +120,7 @@ export default function Settings() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isReconnecting]);
+  }, [isReconnecting, toast]);
 
   // Load settings into form when data is available
   useEffect(() => {
@@ -430,21 +450,31 @@ export default function Settings() {
               
               {/* QR Code Display */}
               {showQrCode && qrCode && (
-                <div className="mt-4 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800 text-center">
-                  <h3 className="text-lg font-medium mb-3">Escaneie o QR Code</h3>
+                <div className="mt-4 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-sm text-center">
+                  <h3 className="text-lg font-medium mb-3 text-green-700 dark:text-green-400">
+                    📱 Escaneie o QR Code
+                  </h3>
                   <div className="flex justify-center mb-3">
                     <img 
                       src={qrCode} 
                       alt="QR Code do WhatsApp" 
-                      className="border rounded"
+                      className="border-2 border-green-200 rounded-lg shadow-sm"
                       style={{ maxWidth: "256px", width: "100%" }}
                     />
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    1. Abra o WhatsApp no seu telemóvel<br/>
-                    2. Vá para Menu → Dispositivos conectados<br/>
-                    3. Toque em "Conectar dispositivo"<br/>
-                    4. Escaneie este código
+                  <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                    <p className="text-sm text-green-700 dark:text-green-300 font-medium mb-2">
+                      Como conectar:
+                    </p>
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      1. Abra o WhatsApp no seu telemóvel<br/>
+                      2. Vá para Menu → Dispositivos conectados<br/>
+                      3. Toque em "Conectar dispositivo"<br/>
+                      4. Escaneie este código
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    O código será fechado automaticamente após a conexão
                   </p>
                 </div>
               )}

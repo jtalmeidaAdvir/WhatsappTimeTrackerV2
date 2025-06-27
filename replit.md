@@ -152,6 +152,11 @@ Changelog:
 - June 27, 2025. Implemented WhatsApp reconnection functionality - allows switching between different WhatsApp accounts/numbers
 - June 27, 2025. Created reconnection endpoint (/api/whatsapp/reconnect) for seamless WhatsApp account switching
 - June 27, 2025. Enhanced settings page with dedicated WhatsApp configuration section
+- June 27, 2025. Implemented QR code display in web interface - no longer requires console access
+- June 27, 2025. Added automatic QR code generation as base64 images for web display
+- June 27, 2025. Created automatic success detection - QR code closes and shows success message when connection completes
+- June 27, 2025. Enhanced user experience with visual loading states and clear connection instructions
+- June 27, 2025. Complete WhatsApp number switching now fully integrated in web interface
 ```
 
 ## User Preferences
