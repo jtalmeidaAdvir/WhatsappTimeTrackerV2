@@ -9,8 +9,8 @@ export class WhatsAppService {
   private readonly commandVariations = {
     'entrada': ['entrada', 'entrar', 'chegar', 'chegada', 'inicio', 'início', 'iniciar', 'comecar', 'começar', 'bom dia', 'bomdia', 'entrei'],
     'saida': ['saida', 'saída', 'sair', 'vou sair', 'quero sair', 'fim', 'terminar', 'acabar', 'tchau', 'adeus', 'boa tarde', 'boatarde', 'boa noite', 'boanoite', 'saí', 'sai'],
-    'pausa': ['pausa', 'pausar', 'almoco', 'almoço', 'lanche', 'cafe', 'café', 'descanso', 'break', 'intervalo'],
-    'volta': ['volta', 'voltar', 'retorno', 'regressar', 'continuar', 'voltei', 'regresso', 'ja voltei', 'já voltei'],
+    'pausa': ['pausa', 'pausar', 'almoco', 'almoço', 'lanche', 'cafe', 'café', 'descanso', 'break', 'intervalo', 'vou a pausa', 'vou à pausa', 'vou fazer pausa', 'vou pausar'],
+    'volta': ['volta', 'voltar', 'retorno', 'regressar', 'continuar', 'voltei', 'regresso', 'ja voltei', 'já voltei', 'voltei da pausa', 'já voltei da pausa', 'regresso da pausa', 'voltei do almoço', 'já voltei do almoço'],
     'horas': ['horas', 'tempo', 'quanto tempo', 'quantas horas', 'total', 'trabalhei', 'trabalhado', 'relatorio', 'relatório']
   };
   
@@ -139,7 +139,7 @@ export class WhatsAppService {
       console.log(`Localização recebida de ${phone}: lat=${location.latitude}, lng=${location.longitude}`);
       // Save location temporarily for next command
       await storage.saveTemporaryLocation(phone, location);
-      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* (ou "chegar", "bom dia")\n🔴 *saida* (ou "sair", "tchau")\n🟡 *pausa* (ou "almoço", "lanche")\n🟢 *volta* (ou "voltei", "regresso")\n⏱️ *horas* (ou "tempo", "quantas horas")`;
+      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* (ou "chegar", "bom dia")\n🔴 *saida* (ou "sair", "tchau")\n🟡 *pausa* (ou "vou à pausa", "break")\n🟢 *volta* (ou "voltei", "voltei da pausa")\n⏱️ *horas* (ou "tempo", "quantas horas")`;
     }
 
     const command = this.extractCommand(message.toLowerCase().trim());
@@ -549,9 +549,9 @@ export class WhatsAppService {
            `🔴 *SAÍDA* - Para marcar saída\n` +
            `   _Exemplos: saida, sair, vou sair, tchau, boa tarde_\n\n` +
            `🟡 *PAUSA* - Para iniciar pausa\n` +
-           `   _Exemplos: pausa, almoço, lanche, café_\n\n` +
+           `   _Exemplos: pausa, almoço, break, vou à pausa_\n\n` +
            `🟢 *VOLTA* - Para voltar da pausa\n` +
-           `   _Exemplos: volta, voltar, voltei, já voltei_\n\n` +
+           `   _Exemplos: volta, voltei, voltei da pausa_\n\n` +
            `⏱️ *HORAS* - Para ver tempo trabalhado\n` +
            `   _Exemplos: horas, tempo, quantas horas_\n\n` +
            `💡 *Pode escrever de forma natural!*`;

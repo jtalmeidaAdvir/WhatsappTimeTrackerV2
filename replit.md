@@ -160,6 +160,9 @@ Changelog:
 - June 27, 2025. Enhanced WhatsApp command recognition - system now accepts natural variations like "sair", "vou sair", "tchau", "bom dia", "almoço", "voltei"
 - June 27, 2025. Added intelligent command mapping - employees can now use multiple ways to express the same action (entrada/entrar/chegar/bom dia)
 - June 27, 2025. Updated help messages to show command examples and encourage natural language usage
+- June 27, 2025. Enhanced "pausa" command - now accepts "vou à pausa", "break", "vou fazer pausa", "vou pausar"
+- June 27, 2025. Enhanced "volta" command - now accepts "voltei", "voltei da pausa", "já voltei da pausa", "voltei do almoço"
+- June 27, 2025. Successfully tested "saída" with accent - normalization system working correctly
 ```
 
 ## User Preferences
