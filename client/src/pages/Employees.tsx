@@ -179,7 +179,7 @@ export default function Employees() {
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-3xl font-bold text-gray-900">Funcionários</h2>
-                            <p className="text-gray-600 mt-1">Gerenciar funcionários do sistema</p>
+                            <p className="text-gray-600 mt-1">Gerir funcionários do sistema</p>
                         </div>
                         <Dialog open={isDialogOpen} onOpenChange={(open) => {
                             setIsDialogOpen(open);

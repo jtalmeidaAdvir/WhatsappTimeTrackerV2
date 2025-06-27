@@ -213,8 +213,8 @@ export default function Settings() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">Configurações</h2>
-              <p className="text-gray-600 mt-1">Configurar o sistema de controle de ponto</p>
+              <h2 className="text-3xl font-bold text-gray-900">Definições</h2>
+              <p className="text-gray-600 mt-1">Configurar o sistema de controlo de ponto</p>
             </div>
           </div>
         </div>
@@ -225,7 +225,7 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <SettingsIcon className="mr-2 h-5 w-5" />
-                Configurações Gerais
+                Definições Gerais
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

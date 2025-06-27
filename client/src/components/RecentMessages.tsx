@@ -50,7 +50,7 @@ export function RecentMessages() {
                 <span className="text-sm text-gray-600">{message.command || message.message}</span>
                 <span className={`w-2 h-2 rounded-full ${message.processed ? 'bg-green-500' : 'bg-yellow-500'}`}></span>
                 <span className={`text-xs ${message.processed ? 'text-green-500' : 'text-yellow-500'}`}>
-                  {message.processed ? 'Processado' : 'Pendente'}
+                  {message.processed ? 'Processada' : 'Pendente'}
                 </span>
               </div>
             </div>

@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatTime(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleTimeString('pt-BR', { 
+  return d.toLocaleTimeString('pt-PT', { 
     hour: '2-digit', 
     minute: '2-digit' 
   });
@@ -60,9 +60,9 @@ export function getStatusBadgeClass(status: string): string {
 export function getStatusLabel(status: string): string {
   switch (status) {
     case 'trabalhando':
-      return 'Trabalhando';
+      return 'A trabalhar';
     case 'pausa':
-      return 'Pausa';
+      return 'Em pausa';
     case 'saiu':
       return 'Saiu';
     case 'ausente':

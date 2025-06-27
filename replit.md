@@ -185,6 +185,11 @@ Changelog:
 - June 27, 2025. Added API rate limiting (100 requests/15min) and webhook-specific limits (50 requests/min)
 - June 27, 2025. Enhanced WhatsApp security with phone format validation and unauthorized access logging
 - June 27, 2025. Implemented request body size limits and security logging for audit trails
+- June 27, 2025. Completed full Portuguese (PT-PT) localization of entire application interface
+- June 27, 2025. Converted all UI text, messages, labels, and documentation to Portuguese Portugal
+- June 27, 2025. Updated status labels: "A trabalhar", "Em pausa", "Saiu", "Ausente"
+- June 27, 2025. Corrected verb forms throughout interface (registar → registou, processar → processada)
+- June 27, 2025. Application now fully localized for Portuguese market with proper PT-PT terminology
 ```
 
 ## User Preferences

@@ -10,12 +10,12 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: BarChart3 },
+  { name: "Painel", href: "/", icon: BarChart3 },
   { name: "Funcionários", href: "/employees", icon: Users },
-  { name: "Registros de Ponto", href: "/time-records", icon: Clock },
+  { name: "Registos de Ponto", href: "/time-records", icon: Clock },
   { name: "Relatórios", href: "/reports", icon: FileText },
   { name: "Integração WhatsApp", href: "/whatsapp", icon: MessageSquare },
-  { name: "Configurações", href: "/settings", icon: Settings },
+  { name: "Definições", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
@@ -30,7 +30,7 @@ export function Sidebar() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900">PontoApp</h1>
-            <p className="text-sm text-gray-500">Controle via WhatsApp</p>
+            <p className="text-sm text-gray-500">Controlo via WhatsApp</p>
           </div>
         </div>
       </div>

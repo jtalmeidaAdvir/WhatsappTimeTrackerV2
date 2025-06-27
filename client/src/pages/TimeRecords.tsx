@@ -55,7 +55,7 @@ export default function TimeRecords() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">Registros de Ponto</h2>
+              <h2 className="text-3xl font-bold text-gray-900">Registos de Ponto</h2>
               <p className="text-gray-600 mt-1">Histórico de entradas, saídas e pausas</p>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function TimeRecords() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Buscar funcionário
+                  Procurar funcionário
                 </label>
                 <Input
                   placeholder="Nome do funcionário..."

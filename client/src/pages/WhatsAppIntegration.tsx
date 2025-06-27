@@ -349,13 +349,13 @@ export default function WhatsAppIntegration() {
                                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                         <div>
                                             <span className="font-mono text-sm bg-white px-2 py-1 rounded">entrada</span>
-                                            <p className="text-sm text-gray-600 mt-1">Registra entrada no trabalho</p>
+                                            <p className="text-sm text-gray-600 mt-1">Regista entrada no trabalho</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                         <div>
                                             <span className="font-mono text-sm bg-white px-2 py-1 rounded">saida</span>
-                                            <p className="text-sm text-gray-600 mt-1">Registra saída do trabalho</p>
+                                            <p className="text-sm text-gray-600 mt-1">Regista saída do trabalho</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -380,7 +380,7 @@ export default function WhatsAppIntegration() {
                                             <strong>Funcionário:</strong> "entrada"
                                         </p>
                                         <p className="text-sm text-blue-600 mt-1">
-                                            <strong>Sistema:</strong> "✅ Entrada registrada com sucesso! ⏰ Horário: 08:30"
+                                            <strong>Sistema:</strong> "✅ Entrada registada com sucesso! ⏰ Horário: 08:30"
                                         </p>
                                     </div>
                                     <div className="p-3 bg-yellow-50 rounded-lg">
@@ -396,7 +396,7 @@ export default function WhatsAppIntegration() {
                                             <strong>Funcionário:</strong> "volta"
                                         </p>
                                         <p className="text-sm text-green-600 mt-1">
-                                            <strong>Sistema:</strong> "▶️ Volta da pausa registrada! ⏰ Horário: 13:00"
+                                            <strong>Sistema:</strong> "▶️ Volta da pausa registada! ⏰ Horário: 13:00"
                                         </p>
                                     </div>
                                 </div>

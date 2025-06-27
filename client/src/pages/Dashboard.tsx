@@ -79,8 +79,8 @@ export default function Dashboard() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">Dashboard</h2>
-              <p className="text-gray-600 mt-1">Visão geral do controle de ponto</p>
+              <h2 className="text-3xl font-bold text-gray-900">Painel de Controlo</h2>
+              <p className="text-gray-600 mt-1">Visão geral do controlo de ponto</p>
             </div>
             <div className="flex items-center space-x-4">
               {/* Manual Refresh Button */}

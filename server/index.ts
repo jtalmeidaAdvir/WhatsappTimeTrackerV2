@@ -9,6 +9,9 @@ import { schedulerService } from "./services/scheduler.js";
 
 const app = express();
 
+// Trust proxy for Replit environment
+app.set('trust proxy', true);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: false, // Disable for Vite in development
