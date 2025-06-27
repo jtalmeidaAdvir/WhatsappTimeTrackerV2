@@ -52,7 +52,9 @@ export const insertWhatsappMessageSchema = createInsertSchema(whatsappMessages).
 
 export type Employee = typeof employees.$inferSelect;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
-export type AttendanceRecord = typeof attendanceRecords.$inferSelect;
+export type AttendanceRecord = typeof attendanceRecords.$inferSelect & {
+    employee_name?: string;
+};
 export type InsertAttendanceRecord = z.infer<typeof insertAttendanceRecordSchema>;
 export type WhatsappMessage = typeof whatsappMessages.$inferSelect;
 export type InsertWhatsappMessage = z.infer<typeof insertWhatsappMessageSchema>;

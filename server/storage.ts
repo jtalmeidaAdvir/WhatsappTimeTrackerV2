@@ -175,12 +175,16 @@ export class DatabaseStorage implements IStorage {
     }
 
     async getAttendanceRecords(employeeId?: number, date?: Date): Promise<AttendanceRecord[]> {
-        let query = "SELECT * FROM attendance_records";
+        let query = `
+            SELECT ar.*, e.name as employee_name 
+            FROM attendance_records ar 
+            LEFT JOIN employees e ON ar.employee_id = e.id
+        `;
         const conditions = [];
         const params = [];
 
         if (employeeId !== undefined) {
-            conditions.push("employee_id = ?");
+            conditions.push("ar.employee_id = ?");
             params.push(employeeId);
         }
         if (date) {
@@ -188,14 +192,20 @@ export class DatabaseStorage implements IStorage {
             start.setHours(0, 0, 0, 0);
             const end = new Date(date);
             end.setHours(23, 59, 59, 999);
-            conditions.push("DATE(timestamp) = DATE(?)");
+            conditions.push("DATE(ar.timestamp) = DATE(?)");
             params.push(start.toISOString());
         }
         if (conditions.length > 0) query += " WHERE " + conditions.join(" AND ");
-        query += " ORDER BY timestamp DESC";
+        query += " ORDER BY ar.timestamp DESC";
 
         const stmt = db.prepare(query);
-        return stmt.all(...params) as AttendanceRecord[];
+        const results = stmt.all(...params) as any[];
+        
+        // Transform results to include employee name in the record for deleted employees
+        return results.map(record => ({
+            ...record,
+            employee_name: record.employee_name || `Funcionário #${record.employee_id} (deletado)`
+        })) as AttendanceRecord[];
     }
 
     async getLatestAttendanceRecord(employeeId: number): Promise<AttendanceRecord | undefined> {

@@ -21,8 +21,12 @@ export default function TimeRecords() {
     queryKey: ["/api/employees"],
   });
 
-  const getEmployeeName = (employeeId: number) => {
-    return employees.find(emp => emp.id === employeeId)?.name || "Funcionário não encontrado";
+  const getEmployeeName = (record: AttendanceRecord) => {
+    // Use employee_name from the joined query if available, otherwise fallback to employees list
+    if (record.employee_name) {
+      return record.employee_name;
+    }
+    return employees.find(emp => emp.id === record.employeeId)?.name || "Funcionário não encontrado";
   };
 
   const getActionBadge = (type: string) => {
@@ -37,7 +41,7 @@ export default function TimeRecords() {
   };
 
   const filteredRecords = records.filter(record => {
-    const employeeName = getEmployeeName(record.employeeId).toLowerCase();
+    const employeeName = getEmployeeName(record).toLowerCase();
     const matchesSearch = searchTerm === "" || employeeName.includes(searchTerm.toLowerCase());
     const matchesDate = selectedDate === "" || record.timestamp.toString().includes(selectedDate);
     return matchesSearch && matchesDate;
@@ -134,12 +138,12 @@ export default function TimeRecords() {
                       <div className="flex items-center space-x-4">
                         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                           <span className="text-sm font-medium text-primary">
-                            {getEmployeeName(record.employeeId).split(' ').map(n => n[0]).join('').toUpperCase()}
+                            {getEmployeeName(record).split(' ').map(n => n[0]).join('').toUpperCase()}
                           </span>
                         </div>
                         <div>
                           <div className="font-medium text-gray-900">
-                            {getEmployeeName(record.employeeId)}
+                            {getEmployeeName(record)}
                           </div>
                           <div className="text-sm text-gray-500 flex items-center">
                             {record.message}
