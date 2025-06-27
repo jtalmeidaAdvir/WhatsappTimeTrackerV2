@@ -5,6 +5,14 @@ export class WhatsAppService {
   private readonly validCommands = ['entrada', 'saida', 'pausa', 'volta'];
 
   async processMessage(phone: string, message: string, location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
+    // Handle location-only messages
+    if (message === "location_received" && location) {
+      console.log(`Localização recebida de ${phone}: lat=${location.latitude}, lng=${location.longitude}`);
+      // Save location temporarily for next command
+      await storage.saveTemporaryLocation(phone, location);
+      return `📍 Localização recebida com sucesso!\n\nAgora digite o comando desejado:\n🟢 *entrada* - Marcar entrada\n🔴 *saida* - Marcar saída\n🟡 *pausa* - Iniciar pausa\n🟢 *volta* - Voltar da pausa`;
+    }
+
     const command = this.extractCommand(message.toLowerCase().trim());
     
     // Save the incoming message
@@ -95,6 +103,11 @@ export class WhatsAppService {
     
     if (hasEntrada) {
       return `${employeeName}, você já registrou entrada hoje!`;
+    }
+
+    // Check if location is required but not provided
+    if (!location || (!location.latitude && !location.longitude)) {
+      return `📍 *${employeeName}*, para registrar sua entrada, preciso da sua localização.\n\n🔹 *Como enviar:*\n1. Toque no 📎 (anexar)\n2. Escolha *Localização*\n3. Selecione *Localização ao vivo* ou *Enviar sua localização atual*\n4. Após enviar a localização, digite *entrada* novamente\n\n⚠️ *Importante:* Envie primeiro a localização, depois o comando entrada.`;
     }
 
     // Validate work hours

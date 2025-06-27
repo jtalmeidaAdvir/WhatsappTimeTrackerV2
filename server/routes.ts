@@ -161,6 +161,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           };
         }
       }
+      // Handle location-only messages (when user sends location)
+      else if (messageData.phone && messageData.location && !messageData.text) {
+        phone = messageData.phone.toString();
+        messageText = "location_received"; // Special marker for location messages
+        location = {
+          latitude: messageData.location.latitude?.toString(),
+          longitude: messageData.location.longitude?.toString(),
+          address: messageData.location.address
+        };
+      }
+      // Handle Z-API location messages with different structure
+      else if (messageData.phone && messageData.type === "locationMessage") {
+        phone = messageData.phone.toString();
+        messageText = "location_received";
+        location = {
+          latitude: messageData.latitude?.toString(),
+          longitude: messageData.longitude?.toString(),
+          address: messageData.address
+        };
+      }
       // Alternative format - direct message
       else if (messageData.phone && messageData.message) {
         phone = messageData.phone.toString();

@@ -121,6 +121,9 @@ Changelog:
 - June 27, 2025. Added location fields (latitude, longitude, address) to attendance records database
 - June 27, 2025. Created temporary location storage system - locations are saved for 5 minutes and automatically used with next time tracking command
 - June 27, 2025. Enhanced UI to show location icon when GPS data is available for attendance records
+- June 27, 2025. Implemented automatic location request system - employees now receive clear instructions to send location before time tracking commands
+- June 27, 2025. Added location-only message detection - system captures GPS coordinates when sent and saves temporarily for next command
+- June 27, 2025. Enhanced WhatsApp integration to guide users through location sharing process for all time tracking activities
 ```
 
 ## User Preferences
