@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Sidebar } from "@/components/Sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { MessageSquare, Send, TestTube, Settings, CheckCircle } from "lucide-react";
+import { MessageSquare, Send, TestTube, Settings, CheckCircle, Copy } from "lucide-react";
 
 export default function WhatsAppIntegration() {
     const [testPhone, setTestPhone] = useState("");
@@ -16,7 +16,12 @@ export default function WhatsAppIntegration() {
     const [testLatitude, setTestLatitude] = useState("");
     const [testLongitude, setTestLongitude] = useState("");
     const [testAddress, setTestAddress] = useState("");
+    const [webhookUrl, setWebhookUrl] = useState("");
     const { toast } = useToast();
+
+    useEffect(() => {
+        setWebhookUrl(`${window.location.origin}/api/whatsapp/webhook`);
+    }, []);
 
     const testMessageMutation = useMutation({
         mutationFn: async (data: { phone: string; message: string; location?: { latitude?: string; longitude?: string; address?: string } }) => {
@@ -61,6 +66,14 @@ export default function WhatsAppIntegration() {
         testMessageMutation.mutate({ phone: testPhone, message: testMessage, location });
     };
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(webhookUrl);
+        toast({
+            title: "URL copiado!",
+            description: "O URL do webhook foi copiado para a área de transferência.",
+        });
+    };
+
     return (
         <div className="min-h-screen flex bg-gray-50">
             <Sidebar />
@@ -93,11 +106,23 @@ export default function WhatsAppIntegration() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Webhook URL (Z-API)
                                 </label>
-                                <Input
-                                    value={`${window.location.origin}/api/whatsapp/webhook`}
-                                    readOnly
-                                    className="bg-gray-50"
-                                />
+                                <div className="flex space-x-2">
+                                    <Input
+                                        value={webhookUrl}
+                                        readOnly
+                                        className="bg-gray-50 flex-1"
+                                    />
+                                    <Button 
+                                        onClick={copyToClipboard}
+                                        variant="outline"
+                                        size="icon"
+                                    >
+                                        <Copy className="h-4 w-4" />
+                                    </Button>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Use este URL na configuração de webhook do Z-API
+                                </p>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
