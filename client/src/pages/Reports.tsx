@@ -10,13 +10,19 @@ import { formatDateTime, formatTime } from "@/lib/utils";
 import { FileText, Download, Calendar, Users, Clock, MapPin } from "lucide-react";
 import { useState } from "react";
 
+// Extended type to handle API response format
+type AttendanceRecordWithDBFields = AttendanceRecord & {
+  employee_id?: number;
+  employee_name?: string;
+};
+
 export default function Reports() {
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const [selectedEmployee, setSelectedEmployee] = useState<string | null>(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const { data: records = [], isLoading: recordsLoading } = useQuery<AttendanceRecord[]>({
+  const { data: records = [], isLoading: recordsLoading } = useQuery<AttendanceRecordWithDBFields[]>({
     queryKey: ["/api/attendance"],
   });
 
@@ -24,28 +30,34 @@ export default function Reports() {
     queryKey: ["/api/employees"],
   });
 
-  const getEmployeeName = (record: AttendanceRecord) => {
+  const getEmployeeName = (record: AttendanceRecordWithDBFields) => {
     if (record.employee_name) {
       return record.employee_name;
     }
-    return employees.find(emp => emp.id === record.employeeId)?.name || "Funcionário não encontrado";
+    // Try both property names due to database/API inconsistency
+    const employeeId = record.employee_id || record.employeeId;
+    return employees.find(emp => emp.id === employeeId)?.name || "Funcionário não encontrado";
   };
 
   const getDateRange = (type: string) => {
     const today = new Date();
-    const startOfDay = new Date(today);
-    startOfDay.setHours(0, 0, 0, 0);
     
     switch (type) {
       case 'today':
+        const startOfDay = new Date(today);
+        startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(today);
         endOfDay.setHours(23, 59, 59, 999);
         return { start: startOfDay, end: endOfDay };
       
       case 'week':
+        // Start of week (Monday)
         const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
+        const dayOfWeek = today.getDay();
+        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Adjust for Monday start
+        startOfWeek.setDate(today.getDate() + diff);
         startOfWeek.setHours(0, 0, 0, 0);
+        
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
         endOfWeek.setHours(23, 59, 59, 999);
@@ -53,11 +65,15 @@ export default function Reports() {
       
       case 'month':
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+        startOfMonth.setHours(0, 0, 0, 0);
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        endOfMonth.setHours(23, 59, 59, 999);
         return { start: startOfMonth, end: endOfMonth };
       
       default:
-        return { start: startOfDay, end: startOfDay };
+        const defaultStart = new Date(today);
+        defaultStart.setHours(0, 0, 0, 0);
+        return { start: defaultStart, end: defaultStart };
     }
   };
 
@@ -66,10 +82,17 @@ export default function Reports() {
     
     let filteredRecords = [...records];
     
+    // Handle employee-specific reports
     if (selectedReport === 'employee' && selectedEmployee && selectedEmployee !== 'all') {
       const employeeId = parseInt(selectedEmployee);
-      filteredRecords = filteredRecords.filter(record => record.employeeId === employeeId);
-    } else if (selectedReport !== 'employee') {
+      filteredRecords = filteredRecords.filter(record => {
+        const recordEmployeeId = record.employee_id || record.employeeId;
+        return recordEmployeeId === employeeId;
+      });
+    }
+    
+    // Handle date-based quick reports (today, week, month)
+    if (['today', 'week', 'month'].includes(selectedReport)) {
       const { start, end } = getDateRange(selectedReport);
       filteredRecords = filteredRecords.filter(record => {
         const recordDate = new Date(record.timestamp);
@@ -77,7 +100,8 @@ export default function Reports() {
       });
     }
 
-    if (startDate && endDate) {
+    // Handle custom date range reports
+    if (selectedReport === 'custom' && startDate && endDate) {
       const customStart = new Date(startDate);
       customStart.setHours(0, 0, 0, 0);
       const customEnd = new Date(endDate);
@@ -87,12 +111,15 @@ export default function Reports() {
         const recordDate = new Date(record.timestamp);
         return recordDate >= customStart && recordDate <= customEnd;
       });
-    }
-
-    // Apply employee filter for custom reports if selected and not "all"
-    if (selectedReport === 'custom' && selectedEmployee && selectedEmployee !== 'all') {
-      const employeeId = parseInt(selectedEmployee);
-      filteredRecords = filteredRecords.filter(record => record.employeeId === employeeId);
+      
+      // Apply employee filter for custom reports if selected and not "all"
+      if (selectedEmployee && selectedEmployee !== 'all') {
+        const employeeId = parseInt(selectedEmployee);
+        filteredRecords = filteredRecords.filter(record => {
+          const recordEmployeeId = record.employee_id || record.employeeId;
+          return recordEmployeeId === employeeId;
+        });
+      }
     }
 
     return filteredRecords.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -101,6 +128,36 @@ export default function Reports() {
   const generateQuickReport = (type: string) => {
     setSelectedReport(type);
     setSelectedEmployee(null);
+  };
+
+  const exportToCSV = () => {
+    const filteredRecords = getFilteredRecords();
+    if (filteredRecords.length === 0) {
+      alert('Não há dados para exportar');
+      return;
+    }
+
+    const headers = ['Data/Hora', 'Funcionário', 'Ação', 'Mensagem', 'Localização'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredRecords.map(record => [
+        `"${formatDateTime(record.timestamp)}"`,
+        `"${getEmployeeName(record)}"`,
+        `"${getActionBadge(record.type).label}"`,
+        `"${record.message || ''}"`,
+        `"${(record.latitude && record.longitude) ? `${record.latitude}, ${record.longitude}` : 'N/A'}"`
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `relatorio_ponto_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const getActionBadge = (type: string) => {
@@ -266,16 +323,27 @@ export default function Reports() {
                    `${reportTitles[selectedReport]} - ${employees.find(e => e.id.toString() === selectedEmployee)?.name}` :
                    reportTitles[selectedReport as keyof typeof reportTitles]}
                 </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedReport(null);
-                    setSelectedEmployee(null);
-                  }}
-                >
-                  Fechar
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={exportToCSV}
+                    disabled={getFilteredRecords().length === 0}
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Exportar CSV
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedReport(null);
+                      setSelectedEmployee(null);
+                    }}
+                  >
+                    Fechar
+                  </Button>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -292,8 +360,17 @@ export default function Reports() {
                     </div>
                   ) : (
                     <>
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
-                        <span>Total de registros: {getFilteredRecords().length}</span>
+                      <div className="flex items-center justify-between text-sm text-gray-600 mb-4 bg-gray-50 p-3 rounded-lg">
+                        <span className="font-medium">Total de registos encontrados: {getFilteredRecords().length}</span>
+                        {selectedReport && (
+                          <span className="text-xs text-gray-500">
+                            {selectedReport === 'today' && 'Hoje'}
+                            {selectedReport === 'week' && 'Esta semana'}  
+                            {selectedReport === 'month' && 'Este mês'}
+                            {selectedReport === 'employee' && selectedEmployee && `Funcionário selecionado`}
+                            {selectedReport === 'custom' && startDate && endDate && `${startDate} a ${endDate}`}
+                          </span>
+                        )}
                       </div>
                       {getFilteredRecords().map((record) => {
                         const badge = getActionBadge(record.type);

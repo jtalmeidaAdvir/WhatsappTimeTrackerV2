@@ -15,7 +15,7 @@ export function formatTime(date: Date | string): string {
 
 export function formatDateTime(date: Date | string): string {
   const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('pt-BR', {
+  return d.toLocaleDateString('pt-PT', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
