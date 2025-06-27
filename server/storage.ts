@@ -188,8 +188,8 @@ export class DatabaseStorage implements IStorage {
             start.setHours(0, 0, 0, 0);
             const end = new Date(date);
             end.setHours(23, 59, 59, 999);
-            conditions.push("timestamp >= ? AND timestamp <= ?");
-            params.push(start.toISOString(), end.toISOString());
+            conditions.push("DATE(timestamp) = DATE(?)");
+            params.push(start.toISOString());
         }
         if (conditions.length > 0) query += " WHERE " + conditions.join(" AND ");
         query += " ORDER BY timestamp DESC";

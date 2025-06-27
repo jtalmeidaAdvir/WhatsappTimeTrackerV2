@@ -99,6 +99,8 @@ export class WhatsAppService {
   }
 
   private async handleEntrada(employeeId: number, employeeName: string, todaysRecords: any[], location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
+    console.log(`Checking entrada for employee ${employeeId}, today's records:`, todaysRecords.map(r => ({type: r.type, timestamp: r.timestamp})));
+    
     const hasEntrada = todaysRecords.some(r => r.type === 'entrada');
     
     if (hasEntrada) {
