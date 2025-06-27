@@ -2,7 +2,7 @@ import { storage } from "../storage";
 import type { InsertAttendanceRecord } from "@shared/schema";
 
 export class WhatsAppService {
-  private readonly validCommands = ['entrada', 'saida', 'pausa', 'volta'];
+  private readonly validCommands = ['entrada', 'saida', 'pausa', 'volta', 'horas'];
 
   async processMessage(phone: string, message: string, location?: { latitude?: string; longitude?: string; address?: string }): Promise<string> {
     // Handle location-only messages
@@ -10,7 +10,7 @@ export class WhatsAppService {
       console.log(`Localização recebida de ${phone}: lat=${location.latitude}, lng=${location.longitude}`);
       // Save location temporarily for next command
       await storage.saveTemporaryLocation(phone, location);
-      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* - Marcar entrada\n🔴 *saida* - Marcar saída\n🟡 *pausa* - Iniciar pausa\n🟢 *volta* - Voltar da pausa`;
+      return `📍 Localização recebida com sucesso!\n\nAgora escreva o comando pretendido:\n🟢 *entrada* - Marcar entrada\n🔴 *saida* - Marcar saída\n🟡 *pausa* - Iniciar pausa\n🟢 *volta* - Voltar da pausa\n⏱️ *horas* - Ver horas trabalhadas`;
     }
 
     const command = this.extractCommand(message.toLowerCase().trim());
@@ -92,6 +92,9 @@ export class WhatsAppService {
       
       case 'volta':
         return this.handleVolta(employeeId, employee.name, latestRecord, location);
+      
+      case 'horas':
+        return this.handleHoras(employeeId, employee.name, todaysRecords);
       
       default:
         return this.getHelpMessage();
@@ -209,6 +212,103 @@ export class WhatsAppService {
     return `▶️ Volta da pausa registada!\n⏰ Horário: ${timeStr}\n👤 Funcionário: ${employeeName}`;
   }
 
+  private async handleHoras(employeeId: number, employeeName: string, todaysRecords: any[]): Promise<string> {
+    if (todaysRecords.length === 0) {
+      return `⏰ *${employeeName}*, ainda não tens registos hoje.\n\nPara consultar as horas trabalhadas, precisa primeiro de registar a entrada.`;
+    }
+
+    // Calculate total worked hours for today
+    let totalMinutes = 0;
+    let currentlyWorking = false;
+    let lastEntrada: Date | null = null;
+    let pauseMinutes = 0;
+    let currentPauseStart: Date | null = null;
+
+    // Sort records by timestamp
+    const sortedRecords = todaysRecords.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    
+    for (const record of sortedRecords) {
+      const recordTime = new Date(record.timestamp);
+      
+      switch (record.type) {
+        case 'entrada':
+          lastEntrada = recordTime;
+          currentlyWorking = true;
+          break;
+          
+        case 'saida':
+          if (lastEntrada) {
+            const workMinutes = Math.floor((recordTime.getTime() - lastEntrada.getTime()) / (1000 * 60));
+            totalMinutes += workMinutes;
+            currentlyWorking = false;
+            lastEntrada = null;
+          }
+          break;
+          
+        case 'pausa':
+          currentPauseStart = recordTime;
+          break;
+          
+        case 'volta':
+          if (currentPauseStart) {
+            const pauseDuration = Math.floor((recordTime.getTime() - currentPauseStart.getTime()) / (1000 * 60));
+            pauseMinutes += pauseDuration;
+            currentPauseStart = null;
+          }
+          break;
+      }
+    }
+
+    // If currently working, add time from last entrada to now
+    if (currentlyWorking && lastEntrada) {
+      const now = new Date();
+      const currentWorkMinutes = Math.floor((now.getTime() - lastEntrada.getTime()) / (1000 * 60));
+      totalMinutes += currentWorkMinutes;
+    }
+
+    // Convert minutes to hours and minutes
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const pauseHours = Math.floor(pauseMinutes / 60);
+    const pauseMins = pauseMinutes % 60;
+
+    // Format the response
+    let response = `⏱️ *Horas trabalhadas hoje*\n👤 Funcionário: ${employeeName}\n\n`;
+    
+    if (hours > 0 || minutes > 0) {
+      response += `⏰ Tempo trabalhado: ${hours}h ${minutes}m\n`;
+    } else {
+      response += `⏰ Tempo trabalhado: 0h 0m\n`;
+    }
+    
+    if (pauseMinutes > 0) {
+      response += `⏸️ Tempo de pausa: ${pauseHours}h ${pauseMins}m\n`;
+    }
+    
+    // Add current status
+    const latestRecord = sortedRecords[sortedRecords.length - 1];
+    if (latestRecord) {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+      response += `\n📊 Estado actual: `;
+      
+      switch (latestRecord.type) {
+        case 'entrada':
+        case 'volta':
+          response += `A trabalhar 🟢\n🕐 Desde: ${new Date(latestRecord.timestamp).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}`;
+          break;
+        case 'pausa':
+          response += `Em pausa 🟡\n🕐 Desde: ${new Date(latestRecord.timestamp).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}`;
+          break;
+        case 'saida':
+          response += `Saiu 🔴\n🕐 Às: ${new Date(latestRecord.timestamp).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}`;
+          break;
+      }
+    }
+
+    return response;
+  }
+
   private async validateWorkHours(): Promise<{ isValid: boolean; message: string }> {
     try {
       // Get work hours settings
@@ -258,7 +358,8 @@ export class WhatsAppService {
            `🟢 *entrada* - Marcar entrada\n` +
            `🔴 *saida* - Marcar saída\n` +
            `🟡 *pausa* - Iniciar pausa\n` +
-           `🟢 *volta* - Voltar da pausa\n\n` +
+           `🟢 *volta* - Voltar da pausa\n` +
+           `⏱️ *horas* - Ver horas trabalhadas hoje\n\n` +
            `Envie apenas a palavra do comando.`;
   }
 

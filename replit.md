@@ -132,6 +132,7 @@ Changelog:
 - June 27, 2025. Reports display real attendance data with employee names, action badges, timestamps, and GPS location links
 - June 27, 2025. Translated all WhatsApp messages to Portuguese Portugal (PT-PT) - messages now use correct Portuguese terminology and verb forms
 - June 27, 2025. Enhanced pause message - now includes instructions to type "volta" to return to work
+- June 27, 2025. Added "horas" command - employees can now query their worked hours for the current day via WhatsApp
 ```
 
 ## User Preferences
